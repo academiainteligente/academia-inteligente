@@ -5,6 +5,15 @@ import {
   LayoutGrid, 
   BookOpen, 
   Users, 
+  Bell,
+  History,
+  Briefcase,
+  GraduationCap,
+  Building2,
+  HeartHandshake,
+  Landmark,
+  Newspaper,
+  HelpCircle,
   Search,
   Lock,
   Clock,
@@ -28,15 +37,15 @@ function HomePage() {
   ];
 
   const secondaryNavItems = [
-    { label: 'Novedades' },
-    { label: 'Historias' },
-    { label: 'Trabajo' },
-    { label: 'Educación' },
-    { label: 'Pequeñas empresas' },
-    { label: 'Organizaciones sin fines de lucro' },
-    { label: 'Gobierno' },
-    { label: 'Organizaciones de noticias' },
-    { label: 'Ayuda' },
+    { label: 'Novedades', icon: Bell },
+    { label: 'Historias', icon: History },
+    { label: 'Trabajo', icon: Briefcase },
+    { label: 'Educación', icon: GraduationCap },
+    { label: 'Pequeñas empresas', icon: Building2 },
+    { label: 'Organizaciones sin fines de lucro', icon: HeartHandshake },
+    { label: 'Gobierno', icon: Landmark },
+    { label: 'Organizaciones de noticias', icon: Newspaper },
+    { label: 'Ayuda', icon: HelpCircle },
   ];
 
   const isActive = (path: string) => {
@@ -90,10 +99,10 @@ function HomePage() {
           {secondaryNavItems.map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-400 cursor-not-allowed"
             >
               <div className="flex items-center gap-3">
-                <Lock className="w-5 h-5" />
+                <item.icon className="w-5 h-5" />
                 {item.label}
               </div>
               <Lock className="w-4 h-4 text-gray-300" />
@@ -103,23 +112,32 @@ function HomePage() {
       </aside>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
-        <button 
-          onClick={() => setMobileMenuOpen(true)}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-        <Link to="/" className="flex items-center">
-          <img 
-            src="/logo-ai.png" 
-            alt="AI" 
-            className="h-10 w-auto"
-          />
-        </Link>
-        <button className="text-sm font-medium text-gray-700">
-          INICIAR SESIÓN
-        </button>
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center px-4 z-50">
+        {/* Left: Menu button */}
+        <div className="flex-1 flex justify-start">
+          <button 
+            onClick={() => setMobileMenuOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+        {/* Center: Logo AI */}
+        <div className="flex-1 flex justify-center">
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/logo-ai.png" 
+              alt="AI" 
+              className="h-10 w-auto"
+            />
+          </Link>
+        </div>
+        {/* Right: Login button */}
+        <div className="flex-1 flex justify-end">
+          <button className="text-sm font-medium text-gray-700">
+            INICIAR SESIÓN
+          </button>
+        </div>
       </header>
 
       {/* Mobile Menu Overlay */}
@@ -134,8 +152,8 @@ function HomePage() {
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <Link to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
                 <img 
-                  src="/logo-largo.png" 
-                  alt="ACADEMIA INTELIGENTE" 
+                  src="/logo-ai.png" 
+                  alt="AI" 
                   className="h-10 w-auto"
                 />
               </Link>
@@ -179,10 +197,10 @@ function HomePage() {
               {secondaryNavItems.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
+                  className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-400 cursor-not-allowed"
                 >
                   <div className="flex items-center gap-3">
-                    <Lock className="w-5 h-5" />
+                    <item.icon className="w-5 h-5" />
                     {item.label}
                   </div>
                   <Lock className="w-4 h-4 text-gray-300" />
