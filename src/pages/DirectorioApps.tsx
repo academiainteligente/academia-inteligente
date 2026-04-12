@@ -18,13 +18,9 @@ import {
   Sparkles,
   ArrowLeft
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { apps, categorias, getRelatedApps } from '@/data/appsData';
-import type { App } from '@/data/appsData';
 import { Link } from 'react-router-dom';
+import { apps, categorias, getRelatedApps } from '../data/appsData';
+import type { App } from '../data/appsData';
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutGrid,
@@ -60,9 +56,7 @@ function AppCard({ app, onClick }: { app: App; onClick: () => void }) {
       </div>
       <p className="text-gray-600 text-sm mt-3 line-clamp-2">{app.descripcion}</p>
       <div className="flex items-center justify-between mt-4">
-        <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-          {app.precio}
-        </Badge>
+        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">{app.precio}</span>
         <span className="text-[#a3e635] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
           Ver detalles →
         </span>
@@ -72,45 +66,44 @@ function AppCard({ app, onClick }: { app: App; onClick: () => void }) {
 }
 
 function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; onClose: () => void }) {
-  if (!app) return null;
+  if (!isOpen || !app) return null;
   
   const relatedApps = getRelatedApps(app.id);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-xl">{app.nombre.charAt(0)}</span>
-            </div>
-            <div className="flex-1">
-              <DialogTitle className="text-2xl">{app.nombre}</DialogTitle>
-              <div className="flex items-center gap-3 mt-2">
-                <Badge className="bg-[#a3e635] text-black">{app.categoria}</Badge>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  <span className="text-sm">{app.calificacion}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-600">{app.usuarios}</span>
-                </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-start gap-4 mb-4">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-xl">{app.nombre.charAt(0)}</span>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold">{app.nombre}</h2>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="px-2 py-1 bg-[#a3e635] text-black text-xs rounded-full">{app.categoria}</span>
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                <span className="text-sm">{app.calificacion}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-600">{app.usuarios}</span>
               </div>
             </div>
           </div>
-        </DialogHeader>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <XIcon className="w-5 h-5" />
+          </button>
+        </div>
         
-        <div className="space-y-6 mt-4">
+        <div className="space-y-6">
           <p className="text-gray-700">{app.descripcionLarga}</p>
           
           <div>
             <h4 className="font-semibold mb-3">Características principales</h4>
             <div className="flex flex-wrap gap-2">
               {app.caracteristicas.map((feat, i) => (
-                <Badge key={i} variant="outline" className="bg-gray-50">
-                  {feat}
-                </Badge>
+                <span key={i} className="px-2 py-1 border border-gray-200 rounded-full text-sm">{feat}</span>
               ))}
             </div>
           </div>
@@ -126,7 +119,7 @@ function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; 
                     <span className="text-green-500 mt-0.5">✓</span> {pro}
                   </li>
                 ))}
-              </ul>
+n              </ul>
             </div>
             <div className="bg-red-50 rounded-lg p-4">
               <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
@@ -158,16 +151,16 @@ function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; 
             </div>
           )}
           
-          <Button 
-            className="w-full bg-[#a3e635] text-black hover:bg-[#bef264] font-semibold py-6"
+          <button 
+            className="w-full bg-[#a3e635] text-black font-semibold py-3 rounded-lg hover:bg-[#bef264] transition-colors flex items-center justify-center"
             onClick={() => window.open(app.url, '_blank')}
           >
             <ExternalLink className="w-5 h-5 mr-2" />
             Visitar sitio oficial
-          </Button>
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
 
@@ -209,9 +202,9 @@ export default function DirectorioApps() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link to="/">
-                <Button variant="ghost" size="icon">
+                <button className="p-2 hover:bg-gray-100 rounded-full">
                   <ArrowLeft className="w-5 h-5" />
-                </Button>
+                </button>
               </Link>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
@@ -234,12 +227,12 @@ export default function DirectorioApps() {
         {/* Search */}
         <div className="relative mb-8">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <Input
+          <input
             type="text"
             placeholder="Buscar aplicaciones..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 pr-12 py-6 text-lg bg-white border-gray-200 rounded-xl"
+            className="w-full pl-12 pr-12 py-4 text-lg bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a3e635]"
           />
           {searchQuery && (
             <button 
@@ -295,11 +288,13 @@ export default function DirectorioApps() {
       </div>
 
       {/* Modal */}
-      <AppModal 
-        app={appSeleccionada} 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
-      />
+      {modalOpen && (
+        <AppModal 
+          app={appSeleccionada} 
+          isOpen={modalOpen} 
+          onClose={() => setModalOpen(false)} 
+        />
+      )}
     </div>
   );
 }
