@@ -17,7 +17,6 @@ import {
   HelpCircle,
   Search
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 function HomePage() {
   const location = useLocation();
