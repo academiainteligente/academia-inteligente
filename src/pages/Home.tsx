@@ -20,7 +20,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function HomePage() {
   const location = useLocation();
@@ -52,6 +52,18 @@ function HomePage() {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
   };
+
+  // Bloquear scroll del body cuando el menú móvil está abierto
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -143,11 +155,13 @@ function HomePage() {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <>
+          {/* Overlay oscuro - bloquea interacciones con el fondo */}
           <div 
-            className="lg:hidden fixed inset-0 bg-black/50 z-50"
+            className="lg:hidden fixed inset-0 bg-black/50 z-50 touch-none"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-white z-50 overflow-y-auto">
+          {/* Menú lateral - con scroll propio independiente */}
+          <div className="lg:hidden fixed left-0 top-0 h-screen w-80 bg-white z-50 overflow-y-auto flex flex-col">
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <Link to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
@@ -193,7 +207,7 @@ function HomePage() {
             <div className="mx-4 my-2 border-t border-gray-200" />
 
             {/* Mobile Secondary Navigation */}
-            <nav className="px-2 py-2">
+            <nav className="px-2 py-2 pb-8">
               {secondaryNavItems.map((item, idx) => (
                 <div
                   key={idx}
