@@ -16,7 +16,12 @@ import {
   Zap,
   Presentation,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  Home as HomeIcon, 
+  Calendar, 
+  BookOpen, 
+  Users as UsersIcon,
+  Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { apps, categorias, getRelatedApps } from '../data/appsData';
@@ -119,7 +124,7 @@ function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; 
                     <span className="text-green-500 mt-0.5">✓</span> {pro}
                   </li>
                 ))}
-n              </ul>
+              </ul>
             </div>
             <div className="bg-red-50 rounded-lg p-4">
               <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
@@ -194,98 +199,226 @@ export default function DirectorioApps() {
     setModalOpen(true);
   };
 
+  const mainNavItems = [
+    { href: '/', label: 'Inicio', icon: HomeIcon },
+    { href: '/eventos', label: 'Eventos', icon: Calendar },
+    { href: '/directorio-apps', label: 'Directorio Apps', icon: LayoutGrid, active: true },
+    { href: '/contenido', label: 'Contenido', icon: BookOpen, locked: true },
+    { href: '/comunidades', label: 'Comunidades', icon: UsersIcon, locked: true },
+  ];
+
+  const secondaryNavItems = [
+    { href: '/novedades', label: 'Novedades', icon: Lock },
+    { href: '/historias', label: 'Historias', icon: Lock },
+    { href: '/trabajo', label: 'Trabajo', icon: Lock },
+    { href: '/educacion', label: 'Educación', icon: Lock },
+    { href: '/pequenas-empresas', label: 'Pequeñas empresas', icon: Lock },
+    { href: '/organizaciones-sin-fines', label: 'Organizaciones sin fines de lucro', icon: Lock },
+    { href: '/gobierno', label: 'Gobierno', icon: Lock },
+    { href: '/organizaciones-noticias', label: 'Organizaciones de noticias', icon: Lock },
+    { href: '/ayuda', label: 'Ayuda', icon: Lock },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/">
-                <button className="p-2 hover:bg-gray-100 rounded-full">
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-              </Link>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-black" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold">Directorio de Apps</h1>
-                  <p className="text-sm text-gray-500">Descubre las mejores herramientas de IA</p>
-                </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 fixed left-0 top-0 bottom-0 overflow-y-auto z-40 hidden lg:block">
+        {/* Logo */}
+        <div className="p-4">
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/logo-largo.png" 
+              alt="ACADEMIA INTELIGENTE" 
+              className="h-8"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
+            <div className="hidden items-center gap-2">
+              <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
+                <span className="text-black font-bold text-xl">AI</span>
               </div>
+              <span className="font-bold text-sm tracking-tight">ACADEMIA<br/>INTELIGENTE</span>
             </div>
-            <div className="text-sm text-gray-500">
-              {appsFiltradas.length} apps encontradas
-            </div>
-          </div>
+          </Link>
         </div>
+
+        {/* Main Navigation */}
+        <nav className="px-2 py-2">
+          {mainNavItems.map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors mb-1 ${
+                item.active
+                  ? 'bg-[#a3e635] text-black'
+                  : item.locked
+                  ? 'text-gray-500 cursor-not-allowed'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </div>
+              {item.locked && <Lock className="w-4 h-4 text-gray-300" />}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Divider */}
+        <div className="mx-4 my-2 border-t border-gray-200" />
+
+        {/* Secondary Navigation */}
+        <nav className="px-2 py-2">
+          {secondaryNavItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
+            >
+              <div className="flex items-center gap-3">
+                <Lock className="w-5 h-5" />
+                {item.label}
+              </div>
+              <Lock className="w-4 h-4 text-gray-300" />
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Mobile Header */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-[#a3e635] rounded-lg flex items-center justify-center">
+            <span className="text-black font-bold">AI</span>
+          </div>
+        </Link>
+        <button className="text-sm font-medium text-gray-700">
+          INICIAR SESIÓN
+        </button>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search */}
-        <div className="relative mb-8">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Buscar aplicaciones..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-12 py-4 text-lg bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a3e635]"
-          />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2"
-            >
-              <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+      {/* Main Content */}
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
+        {/* Desktop Header */}
+        <header className="hidden lg:flex h-16 bg-white border-b border-gray-200 items-center justify-between px-6 sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <button className="p-2 hover:bg-gray-100 rounded-full">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-black" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">Directorio de Apps</h1>
+                <p className="text-sm text-gray-500">Descubre las mejores herramientas de IA</p>
+              </div>
+            </div>
+          </div>
+          <div className="text-sm text-gray-500">
+            {appsFiltradas.length} apps encontradas
+          </div>
+        </header>
+
+        {/* Mobile Header for Directorio */}
+        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <Link to="/">
+            <button className="p-2 hover:bg-gray-100 rounded-full">
+              <ArrowLeft className="w-5 h-5" />
             </button>
+          </Link>
+          <div>
+            <h1 className="text-lg font-bold">Directorio de Apps</h1>
+            <p className="text-xs text-gray-500">{appsFiltradas.length} apps</p>
+          </div>
+        </div>
+
+        <div className="p-4 lg:p-6">
+          {/* Search */}
+          <div className="relative mb-6 lg:mb-8">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Buscar aplicaciones..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-12 py-3 lg:py-4 text-base lg:text-lg bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a3e635]"
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+              >
+                <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
+          </div>
+
+          {/* Categories */}
+          <div className="flex flex-wrap gap-2 mb-6 lg:mb-8">
+            {categorias.map(cat => {
+              const Icon = iconMap[cat.icono] || LayoutGrid;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setCategoriaActiva(cat.id)}
+                  className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full font-medium transition-all text-sm ${
+                    categoriaActiva === cat.id
+                      ? 'bg-[#a3e635] text-black'
+                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {cat.nombre}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Apps Grid */}
+          {appsFiltradas.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+              {appsFiltradas.map(app => (
+                <AppCard 
+                  key={app.id} 
+                  app={app} 
+                  onClick={() => handleAppClick(app)} 
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 lg:py-16">
+              <div className="w-16 lg:w-20 h-16 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 lg:w-10 h-8 lg:h-10 text-gray-400" />
+              </div>
+              <h3 className="text-lg lg:text-xl font-semibold text-gray-700 mb-2">No se encontraron apps</h3>
+              <p className="text-gray-500 text-sm lg:text-base">Intenta con otra búsqueda o categoría</p>
+            </div>
           )}
         </div>
 
-        {/* Categories */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categorias.map(cat => {
-            const Icon = iconMap[cat.icono] || LayoutGrid;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setCategoriaActiva(cat.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-all ${
-                  categoriaActiva === cat.id
-                    ? 'bg-[#a3e635] text-black'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {cat.nombre}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Apps Grid */}
-        {appsFiltradas.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {appsFiltradas.map(app => (
-              <AppCard 
-                key={app.id} 
-                app={app} 
-                onClick={() => handleAppClick(app)} 
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-10 h-10 text-gray-400" />
+        {/* Footer */}
+        <footer className="border-t border-gray-200 py-4 lg:py-6 px-4 lg:px-6 mt-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-black rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">AI</span>
+              </div>
+              <p>© 2026 ACADEMIA INTELIGENTE. Todos los derechos reservados.</p>
             </div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No se encontraron apps</h3>
-            <p className="text-gray-500">Intenta con otra búsqueda o categoría</p>
+            <div className="flex gap-4 lg:gap-6">
+              <Link to="/privacidad" className="hover:text-gray-700">Privacidad</Link>
+              <Link to="/terminos" className="hover:text-gray-700">Términos</Link>
+              <Link to="/contacto" className="hover:text-gray-700">Contacto</Link>
+            </div>
           </div>
-        )}
-      </div>
+        </footer>
+      </main>
 
       {/* Modal */}
       {modalOpen && (
