@@ -35,15 +35,15 @@ function HomePage() {
   ];
 
   const secondaryNavItems = [
-    { href: '/novedades', label: 'Novedades', icon: Bell, locked: true },
-    { href: '/historias', label: 'Historias', icon: History, locked: true },
-    { href: '/trabajo', label: 'Trabajo', icon: Briefcase, locked: true },
-    { href: '/educacion', label: 'Educación', icon: GraduationCap, locked: true },
-    { href: '/pequenas-empresas', label: 'Pequeñas empresas', icon: Building2, locked: true },
-    { href: '/organizaciones-sin-fines', label: 'Organizaciones sin fines de lucro', icon: HeartHandshake, locked: true },
-    { href: '/gobierno', label: 'Gobierno', icon: Landmark, locked: true },
-    { href: '/organizaciones-noticias', label: 'Organizaciones de noticias', icon: Newspaper, locked: true },
-    { href: '/ayuda', label: 'Ayuda', icon: HelpCircle, locked: true },
+    { href: '/novedades', label: 'Novedades', icon: Bell },
+    { href: '/historias', label: 'Historias', icon: History },
+    { href: '/trabajo', label: 'Trabajo', icon: Briefcase },
+    { href: '/educacion', label: 'Educación', icon: GraduationCap },
+    { href: '/pequenas-empresas', label: 'Pequeñas empresas', icon: Building2 },
+    { href: '/organizaciones-sin-fines', label: 'Organizaciones sin fines de lucro', icon: HeartHandshake },
+    { href: '/gobierno', label: 'Gobierno', icon: Landmark },
+    { href: '/organizaciones-noticias', label: 'Organizaciones de noticias', icon: Newspaper },
+    { href: '/ayuda', label: 'Ayuda', icon: HelpCircle },
   ];
 
   const isActive = (path: string) => {
@@ -71,13 +71,15 @@ function HomePage() {
               alt="ACADEMIA INTELIGENTE" 
               className="h-8"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling!.style.display = 'flex';
+                const target = e.currentTarget;
+                target.style.display = 'none';
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
               }}
             />
             <div className="hidden items-center gap-2">
               <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-xl">AI</span>
+                <Sparkles className="w-6 h-6 text-black" />
               </div>
               <span className="font-bold text-sm tracking-tight">ACADEMIA<br/>INTELIGENTE</span>
             </div>
@@ -112,16 +114,16 @@ function HomePage() {
 
         {/* Secondary Navigation */}
         <nav className="px-2 py-2">
-          {secondaryNavItems.map((item) => (
+          {secondaryNavItems.map((item, idx) => (
             <div
-              key={item.href}
+              key={idx}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <Lock className="w-5 h-5" />
                 {item.label}
               </div>
-              {item.locked && <Lock className="w-4 h-4 text-gray-300" />}
+              <Lock className="w-4 h-4 text-gray-300" />
             </div>
           ))}
         </nav>
@@ -242,7 +244,7 @@ function HomePage() {
 
           {/* Coming Soon Section */}
           <div className="text-center py-12 lg:py-16">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 lg:w-20 h-16 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
             </div>
             <h3 className="text-lg lg:text-xl font-bold text-gray-800 mb-2 uppercase tracking-wide">DISPONIBLE PRÓXIMAMENTE</h3>
