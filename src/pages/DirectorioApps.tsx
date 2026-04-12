@@ -4,7 +4,7 @@ import {
   Search, X, ExternalLink, Star, ArrowLeft, Layers, MessageSquare, Image, Video, Mic, Code, BarChart3, Zap, FileText, CheckCircle, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 import { appsData, type App } from '../data/appsData';
-
+import DirectorioApps from './pages/DirectorioApps';
 // Categorías con iconos
 const categorias = [
   { id: 'todas', nombre: 'Todas', icono: Layers },
