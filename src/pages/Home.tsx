@@ -5,7 +5,6 @@ import {
   LayoutGrid, 
   BookOpen, 
   Users, 
-  Sparkles,
   Bell,
   History,
   Briefcase,
