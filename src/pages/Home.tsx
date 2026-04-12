@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  Home, 
+  Home as HomeIcon, 
   Calendar, 
   LayoutGrid, 
   BookOpen, 
@@ -14,30 +14,38 @@ import {
   Landmark,
   Newspaper,
   HelpCircle,
-  Search
+  Search,
+  Lock,
+  Clock,
+  Menu,
+  X
 } from 'lucide-react';
+import { useState } from 'react';
 
 function HomePage() {
   const location = useLocation();
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const mainNavItems = [
-    { href: '/', label: 'Inicio', icon: Home },
+    { href: '/', label: 'Inicio', icon: HomeIcon },
     { href: '/eventos', label: 'Eventos', icon: Calendar },
     { href: '/directorio-apps', label: 'Directorio Apps', icon: LayoutGrid, highlight: true },
-    { href: '/contenido', label: 'Contenido', icon: BookOpen },
-    { href: '/comunidades', label: 'Comunidades', icon: Users },
+    { href: '/contenido', label: 'Contenido', icon: BookOpen, locked: true },
+    { href: '/comunidades', label: 'Comunidades', icon: Users, locked: true },
   ];
 
   const secondaryNavItems = [
-    { href: '/novedades', label: 'Novedades', icon: Bell },
-    { href: '/historias', label: 'Historias', icon: History },
-    { href: '/trabajo', label: 'Trabajo', icon: Briefcase },
-    { href: '/educacion', label: 'Educación', icon: GraduationCap },
-    { href: '/pequenas-empresas', label: 'Pequeñas empresas', icon: Building2 },
-    { href: '/organizaciones-sin-fines', label: 'Organizaciones sin fines de lucro', icon: HeartHandshake },
-    { href: '/gobierno', label: 'Gobierno', icon: Landmark },
-    { href: '/organizaciones-noticias', label: 'Organizaciones de noticias', icon: Newspaper },
-    { href: '/ayuda', label: 'Ayuda', icon: HelpCircle },
+    { label: 'Novedades' },
+    { label: 'Historias' },
+    { label: 'Trabajo' },
+    { label: 'Educación' },
+    { label: 'Pequeñas empresas' },
+    { label: 'Organizaciones sin fines de lucro' },
+    { label: 'Gobierno' },
+    { label: 'Organizaciones de noticias' },
+    { label: 'Ayuda' },
   ];
 
   const isActive = (path: string) => {
@@ -47,12 +55,16 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-white flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 fixed left-0 top-0 bottom-0 overflow-y-auto z-40">
-        {/* Logo */}
+      {/* Sidebar - Desktop */}
+      <aside className="w-64 bg-white border-r border-gray-200 fixed left-0 top-0 bottom-0 overflow-y-auto z-40 hidden lg:block">
+        {/* Logo Desktop */}
         <div className="p-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/logo-largo.png" alt="Academia Inteligente" className="h-8" />
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/logo-largo.png" 
+              alt="ACADEMIA INTELIGENTE" 
+              className="h-10 w-auto"
+            />
           </Link>
         </div>
 
@@ -62,16 +74,19 @@ function HomePage() {
             <Link
               key={item.href}
               to={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 ${
+              className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors mb-1 ${
                 isActive(item.href)
                   ? 'bg-[#a3e635] text-black'
                   : item.highlight
-                  ? 'text-[#a3e635] hover:bg-gray-100'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'text-[#a3e635] hover:bg-gray-50'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <item.icon className="w-5 h-5" />
-              {item.label}
+              <div className="flex items-center gap-3">
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </div>
+              {item.locked && <Lock className="w-4 h-4 text-gray-400" />}
             </Link>
           ))}
         </nav>
@@ -81,26 +96,116 @@ function HomePage() {
 
         {/* Secondary Navigation */}
         <nav className="px-2 py-2">
-          {secondaryNavItems.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 text-gray-600 hover:bg-gray-100 ${
-                isActive(item.href) ? 'bg-gray-100' : ''
-              }`}
+          {secondaryNavItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
             >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </Link>
+              <div className="flex items-center gap-3">
+                <Lock className="w-5 h-5" />
+                {item.label}
+              </div>
+              <Lock className="w-4 h-4 text-gray-300" />
+            </div>
           ))}
         </nav>
       </aside>
 
+      {/* Mobile Header */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
+        <button 
+          onClick={() => setMobileMenuOpen(true)}
+          className="p-2 hover:bg-gray-100 rounded-lg"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/logo-ai.png" 
+            alt="AI" 
+            className="h-10 w-auto"
+          />
+        </Link>
+        <button className="text-sm font-medium text-gray-700">
+          INICIAR SESIÓN
+        </button>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <>
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-50"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-white z-50 overflow-y-auto">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <Link to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                <img 
+                  src="/logo-largo.png" 
+                  alt="ACADEMIA INTELIGENTE" 
+                  className="h-10 w-auto"
+                />
+              </Link>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Mobile Main Navigation */}
+            <nav className="px-2 py-4">
+              {mainNavItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors mb-1 ${
+                    isActive(item.href)
+                      ? 'bg-[#a3e635] text-black'
+                      : item.highlight
+                      ? 'text-[#a3e635] hover:bg-gray-50'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5" />
+                    {item.label}
+                  </div>
+                  {item.locked && <Lock className="w-4 h-4 text-gray-400" />}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Divider */}
+            <div className="mx-4 my-2 border-t border-gray-200" />
+
+            {/* Mobile Secondary Navigation */}
+            <nav className="px-2 py-2">
+              {secondaryNavItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
+                >
+                  <div className="flex items-center gap-3">
+                    <Lock className="w-5 h-5" />
+                    {item.label}
+                  </div>
+                  <Lock className="w-4 h-4 text-gray-300" />
+                </div>
+              ))}
+            </nav>
+          </div>
+        </>
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 ml-64">
-        {/* Top Header */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-30">
-          {/* Search */}
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
+        {/* Desktop Header */}
+        <header className="hidden lg:flex h-16 bg-white border-b border-gray-200 items-center justify-between px-6 sticky top-0 z-30">
           <div className="flex-1 max-w-md">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -111,58 +216,59 @@ function HomePage() {
               />
             </div>
           </div>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-4">
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors">
-              INICIAR SESIÓN
-            </button>
-          </div>
+          <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors">
+            INICIAR SESIÓN
+          </button>
         </header>
 
         {/* Page Content */}
-        <div className="p-6">
-          {/* Hero Section */}
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white p-8 mb-8">
+        <div className="p-4 lg:p-6">
+          {/* Hero Section con Portada */}
+          <div 
+            className="relative rounded-2xl overflow-hidden text-white p-6 lg:p-8 mb-8"
+            style={{
+              backgroundImage: `linear-gradient(rgba(88, 28, 135, 0.85), rgba(67, 20, 102, 0.9)), url('/hero-portada.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
             <div className="relative z-10 max-w-2xl">
-              <h1 className="text-4xl font-bold mb-4">La Academia Inteligente</h1>
-              <p className="text-lg mb-2">
+              <h1 className="text-2xl lg:text-4xl font-bold mb-4">La Academia Inteligente</h1>
+              <p className="text-base lg:text-lg mb-2">
                 Te invita al <span className="text-[#a3e635] font-semibold">EVENTO GRATUITO</span> de Inteligencia Artificial{' '}
                 <span className="text-[#a3e635] font-semibold">MÁS GRANDE</span> de México y Latinoamérica.
               </p>
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-200 text-sm lg:text-base mb-6">
                 Aprende cómo aplicar IA, automatización y estrategias digitales para crecer profesionalmente en la nueva era.
               </p>
-              <button className="px-6 py-3 bg-[#a3e635] text-black font-semibold rounded-full hover:bg-[#bef264] transition-colors">
+              <button 
+                onClick={() => setShowJoinModal(true)}
+                className="px-6 py-3 bg-[#a3e635] text-black font-semibold rounded-full hover:bg-[#bef264] transition-colors"
+              >
                 Únete Ahora
               </button>
-            </div>
-            {/* Background decoration */}
-            <div className="absolute right-0 top-0 w-1/2 h-full opacity-20">
-              <div className="absolute right-10 top-10 w-64 h-64 bg-purple-500 rounded-full blur-3xl" />
-              <div className="absolute right-20 bottom-10 w-48 h-48 bg-indigo-500 rounded-full blur-3xl" />
             </div>
           </div>
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="p-6 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Formación real en Inteligencia Artificial</h3>
-              <p className="text-gray-600 text-sm">
+          <div className="grid md:grid-cols-3 gap-4 lg:gap-6 mb-8">
+            <div className="p-4 lg:p-6 bg-white border border-gray-200 rounded-xl">
+              <h3 className="text-base lg:text-lg font-semibold mb-2">Formación real en Inteligencia Artificial</h3>
+              <p className="text-gray-600 text-xs lg:text-sm">
                 Aprende a utilizar IA, automatización y herramientas digitales con un enfoque práctico. 
                 Aquí no solo consumes contenido... desarrollas habilidades aplicables desde el primer día.
               </p>
             </div>
-            <div className="p-6 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Marketing, ventas y sistemas en la era digital</h3>
-              <p className="text-gray-600 text-sm">
+            <div className="p-4 lg:p-6 bg-white border border-gray-200 rounded-xl">
+              <h3 className="text-base lg:text-lg font-semibold mb-2">Marketing, ventas y sistemas en la era digital</h3>
+              <p className="text-gray-600 text-xs lg:text-sm">
                 Descubre cómo integrar Inteligencia Artificial en marketing digital, ventas y procesos empresariales. 
                 Construye sistemas que te permitan crecer más rápido con menos esfuerzo.
               </p>
             </div>
-            <div className="p-6 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Eventos y experiencias para profesionales</h3>
-              <p className="text-gray-600 text-sm">
+            <div className="p-4 lg:p-6 bg-white border border-gray-200 rounded-xl">
+              <h3 className="text-base lg:text-lg font-semibold mb-2">Eventos y experiencias para profesionales</h3>
+              <p className="text-gray-600 text-xs lg:text-sm">
                 Accede a eventos, entrenamientos y sesiones en vivo diseñadas para quienes buscan evolucionar. 
                 Aprende directamente lo que ya se está aplicando en la industria.
               </p>
@@ -170,34 +276,54 @@ function HomePage() {
           </div>
 
           {/* Events Section */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Eventos</h2>
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
-              <div className="flex items-start gap-4">
+          <div className="mb-8">
+            <h2 className="text-xl lg:text-2xl font-bold mb-4">Eventos</h2>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
                 <div className="w-16 h-16 bg-[#a3e635] rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-black font-bold text-sm text-center">15 de<br/>Abril</span>
+                  <span className="text-black font-bold text-sm text-center leading-tight">15 de<br/>Abril</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-1">Bootcamp Inteligencia Artificial X100</h3>
-                  <p className="text-gray-600 text-sm mb-3">19:00 pm a 21:00 pm (hora de la CDMX)</p>
-                  <button className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors">
+                  <h3 className="text-base lg:text-lg font-semibold mb-1">Bootcamp Inteligencia Artificial X100</h3>
+                  <div className="flex items-center gap-2 text-gray-600 text-sm mb-3">
+                    <Clock className="w-4 h-4" />
+                    19:00 pm a 21:00 pm (hora de la CDMX)
+                  </div>
+                  <button 
+                    onClick={() => setShowRegisterModal(true)}
+                    className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors uppercase tracking-wide"
+                  >
                     INICIAR REGISTRO
                   </button>
                 </div>
               </div>
             </div>
-            <p className="text-center text-gray-500 text-sm mt-4">
-              DISPONIBLE PRÓXIMAMENTE<br/>
+          </div>
+
+          {/* Coming Soon Section */}
+          <div className="text-center py-12 lg:py-16">
+            <div className="w-16 lg:w-20 h-16 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
+            </div>
+            <h3 className="text-lg lg:text-xl font-bold text-gray-800 mb-2 uppercase tracking-wide">DISPONIBLE PRÓXIMAMENTE</h3>
+            <p className="text-gray-500 text-sm lg:text-base">
               Estamos trabajando en más contenido para ti. ¡Vuelve pronto!
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="border-t border-gray-200 py-6 px-6 mt-8">
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <p>© 2026 ACADEMIA INTELIGENTE. Todos los derechos reservados.</p>
-            <div className="flex gap-4">
+        <footer className="border-t border-gray-200 py-4 lg:py-6 px-4 lg:px-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <img 
+                src="/logo-ai.png" 
+                alt="AI" 
+                className="h-6 w-auto"
+              />
+              <p>© 2026 ACADEMIA INTELIGENTE. Todos los derechos reservados.</p>
+            </div>
+            <div className="flex gap-4 lg:gap-6">
               <Link to="/privacidad" className="hover:text-gray-700">Privacidad</Link>
               <Link to="/terminos" className="hover:text-gray-700">Términos</Link>
               <Link to="/contacto" className="hover:text-gray-700">Contacto</Link>
@@ -205,6 +331,64 @@ function HomePage() {
           </div>
         </footer>
       </main>
+
+      {/* Register Modal */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowRegisterModal(false)}>
+          <div className="bg-white rounded-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Registro al Bootcamp</h2>
+              <button onClick={() => setShowRegisterModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <span className="text-2xl">&times;</span>
+              </button>
+            </div>
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="Tu nombre" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+                <input type="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="tu@email.com" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                <input type="tel" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="+52 123 456 7890" />
+              </div>
+              <button type="submit" className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors">
+                REGISTRARME
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Join Modal */}
+      {showJoinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowJoinModal(false)}>
+          <div className="bg-white rounded-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Únete a la Academia Inteligente</h2>
+              <button onClick={() => setShowJoinModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <span className="text-2xl">&times;</span>
+              </button>
+            </div>
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="Tu nombre" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+                <input type="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="tu@email.com" />
+              </div>
+              <button type="submit" className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors">
+                UNIRME AHORA
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
