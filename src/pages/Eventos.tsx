@@ -1,9 +1,25 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  Home as HomeIcon, Calendar, LayoutGrid, BookOpen, Users, 
-  Bell, History, Briefcase, GraduationCap, Building2, 
-  HeartHandshake, Landmark, Newspaper, HelpCircle,
-  Search, Lock, Menu, X, Video, ChevronDown, ArrowLeft
+  Home as HomeIcon, 
+  Calendar, 
+  LayoutGrid, 
+  BookOpen, 
+  Users, 
+  Bell,
+  History,
+  Briefcase,
+  GraduationCap,
+  Building2,
+  HeartHandshake,
+  Landmark,
+  Newspaper,
+  HelpCircle,
+  Search,
+  Lock,
+  Menu,
+  X,
+  ChevronDown,
+  Clock
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
@@ -37,6 +53,7 @@ const countryCodes = [
 function EventosPage() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [formData, setFormData] = useState({ nombre: '', email: '', telefono: '' });
@@ -203,25 +220,65 @@ function EventosPage() {
         </header>
 
         <div className="p-4 lg:p-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 text-sm">
-            <ArrowLeft className="w-4 h-4" />Volver a inicio
-          </Link>
-
-          <div className="rounded-2xl overflow-hidden mb-6">
-            <img src="/bootcamp-portada-abril.png" alt="Bootcamp Inteligencia Artificial X100" className="w-full h-auto object-cover" />
-          </div>
-
-          <div className="mb-8">
-            <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
-              <Video className="w-4 h-4" /><span>Transmisión por Zoom</span>
+          <h1 className="text-xl lg:text-2xl font-bold mb-6">Eventos</h1>
+          
+          {/* Event Card */}
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden max-w-2xl">
+            {/* Event Image with Date Badge */}
+            <div className="relative">
+              <img 
+                src="/bootcamp-portada-abril.png" 
+                alt="Bootcamp Inteligencia Artificial X100" 
+                className="w-full h-auto object-cover"
+              />
+              {/* Date Badge */}
+              <div className="absolute top-4 left-4 bg-[#a3e635] text-black text-xs font-bold px-3 py-1.5 rounded-full">
+                15 de Abril
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
-              <Calendar className="w-4 h-4" /><span>Miércoles 15 de Abril, 19:00 pm a 21:00 pm (hora de la CDMX)</span>
+            
+            {/* Event Info */}
+            <div className="p-4 lg:p-6">
+              <h2 className="text-lg font-semibold mb-2">Bootcamp Inteligencia Artificial X100</h2>
+              <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+                <Clock className="w-4 h-4" />
+                <span>19:00 pm a 21:00 pm (hora de la CDMX)</span>
+              </div>
+              <button 
+                onClick={() => setShowRegisterModal(true)}
+                className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors uppercase tracking-wide"
+              >
+                INICIAR REGISTRO
+              </button>
             </div>
           </div>
+        </div>
 
-          <div className="max-w-md mx-auto">
-            <h2 className="text-lg font-semibold text-center mb-6">Completa tu registro</h2>
+        <footer className="border-t border-gray-200 py-4 lg:py-6 px-4 lg:px-6 mt-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <img src="/logo-ai.png" alt="AI" className="h-6 w-auto" />
+              <p>© 2026 ACADEMIA INTELIGENTE. Todos los derechos reservados.</p>
+            </div>
+            <div className="flex gap-4 lg:gap-6">
+              <Link to="/privacidad" className="hover:text-gray-700">Privacidad</Link>
+              <Link to="/terminos" className="hover:text-gray-700">Términos</Link>
+              <Link to="/contacto" className="hover:text-gray-700">Contacto</Link>
+            </div>
+          </div>
+        </footer>
+      </main>
+
+      {/* Register Modal */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowRegisterModal(false)}>
+          <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Completa tu registro</h2>
+              <button onClick={() => setShowRegisterModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <span className="text-2xl">&times;</span>
+              </button>
+            </div>
             
             {submitSuccess ? (
               <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
@@ -232,7 +289,7 @@ function EventosPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-green-800 mb-2">¡Registro Exitoso!</h3>
                 <p className="text-green-600 text-sm mb-4">Te hemos enviado un correo con los detalles del evento y el enlace de Zoom.</p>
-                <button onClick={() => setSubmitSuccess(false)} className="text-green-700 font-medium hover:underline">Registrar otra persona</button>
+                <button onClick={() => { setSubmitSuccess(false); setShowRegisterModal(false); }} className="text-green-700 font-medium hover:underline">Cerrar</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -292,21 +349,7 @@ function EventosPage() {
             )}
           </div>
         </div>
-
-        <footer className="border-t border-gray-200 py-4 lg:py-6 px-4 lg:px-6 mt-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <img src="/logo-ai.png" alt="AI" className="h-6 w-auto" />
-              <p>© 2026 ACADEMIA INTELIGENTE. Todos los derechos reservados.</p>
-            </div>
-            <div className="flex gap-4 lg:gap-6">
-              <Link to="/privacidad" className="hover:text-gray-700">Privacidad</Link>
-              <Link to="/terminos" className="hover:text-gray-700">Términos</Link>
-              <Link to="/contacto" className="hover:text-gray-700">Contacto</Link>
-            </div>
-          </div>
-        </footer>
-      </main>
+      )}
     </div>
   );
 }
