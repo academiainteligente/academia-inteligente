@@ -1,16 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import DirectorioApps from './pages/DirectorioApps';
+import Eventos from './pages/Eventos';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/directorio-apps" element={<DirectorioApps />} />
-        <Route path="/eventos" element={<Home />} />
-        <Route path="/contenido" element={<Home />} />
-        <Route path="/comunidades" element={<Home />} />
+        <Route path="/eventos" element={<Eventos />} />
       </Routes>
     </Router>
   );
