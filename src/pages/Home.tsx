@@ -310,7 +310,7 @@ function HomePage() {
         </footer>
       </main>
 
-      {/* Register Modal - AMBOS BOTONES ABREN ESTE MISMO MODAL */}
+      {/* Register Modal */}
       {showRegisterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowRegisterModal(false)}>
           <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
@@ -327,7 +327,9 @@ function HomePage() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-green-800 mb-2">¡Registro Exitoso!</h3>
-                <p className="text-green-600 text-sm mb-4">Te hemos enviado un correo con los detalles del evento y el enlace de Zoom.</p>
+                <p className="text-green-600 text-sm mb-4">
+                  Te compartiremos los detalles y el enlace de Zoom a tu WhatsApp. Si tienes alguna duda envía un mensaje al WhatsApp +52 (833) 343 0709
+                </p>
                 <button onClick={() => { setSubmitSuccess(false); setShowRegisterModal(false); }} className="text-green-700 font-medium hover:underline">Cerrar</button>
               </div>
             ) : (
