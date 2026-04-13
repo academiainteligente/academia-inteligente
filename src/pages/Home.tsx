@@ -328,9 +328,19 @@ function HomePage() {
                 </div>
                 <h3 className="text-lg font-semibold text-green-800 mb-2">¡Registro Exitoso!</h3>
                 <p className="text-green-600 text-sm mb-4">
-                  Te compartiremos los detalles y el enlace de Zoom a tu WhatsApp. Si tienes alguna duda envía un mensaje al WhatsApp +52 (833) 343 0709
+                  Te compartiremos los detalles y el enlace de Zoom a tu WhatsApp. Si tienes alguna duda envía un mensaje al WhatsApp:
                 </p>
-                <button onClick={() => { setSubmitSuccess(false); setShowRegisterModal(false); }} className="text-green-700 font-medium hover:underline">Cerrar</button>
+                <a 
+                  href="https://wa.me/528333430709" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block text-green-700 font-bold text-lg hover:underline mb-4"
+                >
+                  +52 (833) 343 0709
+                </a>
+                <div>
+                  <button onClick={() => { setSubmitSuccess(false); setShowRegisterModal(false); }} className="text-green-700 font-medium hover:underline">Cerrar</button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
