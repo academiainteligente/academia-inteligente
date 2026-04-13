@@ -24,7 +24,6 @@ import { useState, useEffect } from 'react';
 
 function HomePage() {
   const location = useLocation();
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -53,7 +52,6 @@ function HomePage() {
     return location.pathname.startsWith(path);
   };
 
-  // Bloquear scroll del body cuando el menú móvil está abierto
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -69,7 +67,6 @@ function HomePage() {
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Desktop */}
       <aside className="w-64 bg-white border-r border-gray-200 fixed left-0 top-0 bottom-0 overflow-y-auto z-40 hidden lg:block">
-        {/* Logo Desktop */}
         <div className="p-4">
           <Link to="/" className="flex items-center">
             <img 
@@ -80,7 +77,6 @@ function HomePage() {
           </Link>
         </div>
 
-        {/* Main Navigation */}
         <nav className="px-2 py-2">
           {mainNavItems.map((item) => (
             <Link
@@ -103,10 +99,8 @@ function HomePage() {
           ))}
         </nav>
 
-        {/* Divider */}
         <div className="mx-4 my-2 border-t border-gray-200" />
 
-        {/* Secondary Navigation */}
         <nav className="px-2 py-2">
           {secondaryNavItems.map((item, idx) => (
             <div
@@ -125,7 +119,6 @@ function HomePage() {
 
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center px-4 z-50">
-        {/* Left: Menu button */}
         <div className="flex-1 flex justify-start">
           <button 
             onClick={() => setMobileMenuOpen(true)}
@@ -134,7 +127,6 @@ function HomePage() {
             <Menu className="w-6 h-6" />
           </button>
         </div>
-        {/* Center: Logo AI */}
         <div className="flex-1 flex justify-center">
           <Link to="/" className="flex items-center">
             <img 
@@ -144,7 +136,6 @@ function HomePage() {
             />
           </Link>
         </div>
-        {/* Right: Login button */}
         <div className="flex-1 flex justify-end">
           <button className="text-sm font-medium text-gray-700">
             INICIAR SESIÓN
@@ -155,14 +146,11 @@ function HomePage() {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <>
-          {/* Overlay oscuro - bloquea interacciones con el fondo */}
           <div 
             className="lg:hidden fixed inset-0 bg-black/50 z-50 touch-none"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Menú lateral - con scroll propio independiente */}
           <div className="lg:hidden fixed left-0 top-0 h-screen w-80 bg-white z-50 overflow-y-auto flex flex-col">
-            {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <Link to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
                 <img 
@@ -179,7 +167,6 @@ function HomePage() {
               </button>
             </div>
 
-            {/* Mobile Main Navigation */}
             <nav className="px-2 py-4">
               {mainNavItems.map((item) => (
                 <Link
@@ -203,10 +190,8 @@ function HomePage() {
               ))}
             </nav>
 
-            {/* Divider */}
             <div className="mx-4 my-2 border-t border-gray-200" />
 
-            {/* Mobile Secondary Navigation */}
             <nav className="px-2 py-2 pb-8">
               {secondaryNavItems.map((item, idx) => (
                 <div
@@ -227,7 +212,6 @@ function HomePage() {
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
-        {/* Desktop Header */}
         <header className="hidden lg:flex h-16 bg-white border-b border-gray-200 items-center justify-between px-6 sticky top-0 z-30">
           <div className="flex-1 max-w-md">
             <div className="relative">
@@ -244,9 +228,7 @@ function HomePage() {
           </button>
         </header>
 
-        {/* Page Content */}
         <div className="p-4 lg:p-6">
-          {/* Hero Section con Portada */}
           <div 
             className="relative rounded-2xl overflow-hidden text-white p-6 lg:p-8 mb-8"
             style={{
@@ -273,7 +255,6 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Features Grid */}
           <div className="grid md:grid-cols-3 gap-4 lg:gap-6 mb-8">
             <div className="p-4 lg:p-6 bg-white border border-gray-200 rounded-xl">
               <h3 className="text-base lg:text-lg font-semibold mb-2">Formación real en Inteligencia Artificial</h3>
@@ -298,7 +279,6 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Events Section */}
           <div className="mb-8">
             <h2 className="text-xl lg:text-2xl font-bold mb-4">Eventos</h2>
             <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6">
@@ -312,18 +292,17 @@ function HomePage() {
                     <Clock className="w-4 h-4" />
                     19:00 pm a 21:00 pm (hora de la CDMX)
                   </div>
-                  <button 
-                    onClick={() => setShowRegisterModal(true)}
-                    className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors uppercase tracking-wide"
+                  <Link 
+                    to="/eventos"
+                    className="block w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors uppercase tracking-wide text-center"
                   >
                     INICIAR REGISTRO
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Coming Soon Section */}
           <div className="text-center py-12 lg:py-16">
             <div className="w-16 lg:w-20 h-16 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-gray-400" />
@@ -335,7 +314,6 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Footer */}
         <footer className="border-t border-gray-200 py-4 lg:py-6 px-4 lg:px-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-2">
@@ -354,37 +332,6 @@ function HomePage() {
           </div>
         </footer>
       </main>
-
-      {/* Register Modal */}
-      {showRegisterModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowRegisterModal(false)}>
-          <div className="bg-white rounded-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Registro al Bootcamp</h2>
-              <button onClick={() => setShowRegisterModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <span className="text-2xl">&times;</span>
-              </button>
-            </div>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="Tu nombre" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-                <input type="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="tu@email.com" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="tel" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="+52 123 456 7890" />
-              </div>
-              <button type="submit" className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors">
-                REGISTRARME
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Join Modal */}
       {showJoinModal && (
