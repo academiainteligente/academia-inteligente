@@ -52,7 +52,6 @@ const countryCodes = [
 
 function HomePage() {
   const location = useLocation();
-  const [showJoinModal, setShowJoinModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
@@ -233,7 +232,12 @@ function HomePage() {
               <p className="text-gray-200 text-sm lg:text-base mb-6">
                 Aprende cómo aplicar IA, automatización y estrategias digitales para crecer profesionalmente en la nueva era.
               </p>
-              <button onClick={() => setShowJoinModal(true)} className="px-6 py-3 bg-[#a3e635] text-black font-semibold rounded-full hover:bg-[#bef264] transition-colors">Únete Ahora</button>
+              <button 
+                onClick={() => setShowRegisterModal(true)}
+                className="px-6 py-3 bg-[#a3e635] text-black font-semibold rounded-full hover:bg-[#bef264] transition-colors"
+              >
+                Únete Ahora
+              </button>
             </div>
           </div>
 
@@ -253,26 +257,18 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Events Section - CON TARJETA DEL EVENTO */}
+          {/* Events Section */}
           <div className="mb-8">
             <h2 className="text-xl lg:text-2xl font-bold mb-4">Eventos</h2>
             
             {/* Event Card */}
             <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden max-w-2xl">
-              {/* Event Image with Date Badge */}
               <div className="relative">
-                <img 
-                  src="/bootcamp-portada-abril.png" 
-                  alt="Bootcamp Inteligencia Artificial X100" 
-                  className="w-full h-auto object-cover"
-                />
-                {/* Date Badge */}
+                <img src="/bootcamp-portada-abril.png" alt="Bootcamp Inteligencia Artificial X100" className="w-full h-auto object-cover" />
                 <div className="absolute top-4 left-4 bg-[#a3e635] text-black text-xs font-bold px-3 py-1.5 rounded-full">
                   15 de Abril
                 </div>
               </div>
-              
-              {/* Event Info */}
               <div className="p-4 lg:p-6">
                 <h3 className="text-lg font-semibold mb-2">Bootcamp Inteligencia Artificial X100</h3>
                 <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
@@ -314,30 +310,7 @@ function HomePage() {
         </footer>
       </main>
 
-      {/* Join Modal */}
-      {showJoinModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowJoinModal(false)}>
-          <div className="bg-white rounded-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Únete a la Academia Inteligente</h2>
-              <button onClick={() => setShowJoinModal(false)} className="p-2 hover:bg-gray-100 rounded-full"><span className="text-2xl">&times;</span></button>
-            </div>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="Tu nombre" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-                <input type="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a3e635]" placeholder="tu@email.com" />
-              </div>
-              <button type="submit" className="w-full py-3 bg-[#a3e635] text-black font-semibold rounded-lg hover:bg-[#bef264] transition-colors">UNIRME AHORA</button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Register Modal */}
+      {/* Register Modal - AMBOS BOTONES ABREN ESTE MISMO MODAL */}
       {showRegisterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowRegisterModal(false)}>
           <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
