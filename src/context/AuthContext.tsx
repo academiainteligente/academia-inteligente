@@ -113,7 +113,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         'apprentice': 'apprentice'
       };
 
-      const userData: Omit<User, 'uid'> = {
+      // CORRECCIÓN: No incluir phone si está vacío
+      const userDataToSave: any = {
+        email: data.email,
+        displayName: data.displayName,
+        role: roleMap[data.planId] || 'apprentice',
+        subscriptionStatus: 'pending',
+        planId: data.planId,
+        paymentReference: null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        lastLoginAt: serverTimestamp(),
+        uid: result.user.uid,
+      };
+
+      // Solo agregar phone si tiene valor
+      if (data.phone && data.phone.trim() !== '') {
+        userDataToSave.phone = data.phone;
+      }
+
+      await setDoc(doc(db, 'users', result.user.uid), userDataToSave);
+
+      const newUser: User = {
+        uid: result.user.uid,
         email: data.email,
         displayName: data.displayName,
         role: roleMap[data.planId] || 'apprentice',
@@ -124,19 +146,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updatedAt: new Date(),
         lastLoginAt: new Date(),
         phone: data.phone || undefined,
-      };
-
-      await setDoc(doc(db, 'users', result.user.uid), {
-        ...userData,
-        uid: result.user.uid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        lastLoginAt: serverTimestamp(),
-      });
-
-      const newUser: User = {
-        uid: result.user.uid,
-        ...userData,
       };
 
       setUserData(newUser);
