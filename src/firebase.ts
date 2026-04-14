@@ -3,13 +3,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD1vDe9xYt83JvRCqPqNVJo8eJ6Zc-OnpE",
+  apiKey: "AIzaSyD1vDb9zYIBJ3vRoPq8VJo5aIK5Zc-DhpE",
   authDomain: "academiainteligente-f1bbe.firebaseapp.com",
   projectId: "academiainteligente-f1bbe",
   storageBucket: "academiainteligente-f1bbe.firebasestorage.app",
   messagingSenderId: "90075387303",
-  appId: "1:90075387303:web:e3bbb6412f92bea1a35262",
-  measurementId: "G-1JWZEd95x"
+  appId: "1:90075387303:web:0cd9c522c9ad1231a35282",
+  measurementId: "G-GFDWRMWM69"
 };
 
 const app = initializeApp(firebaseConfig);
