@@ -37,7 +37,7 @@ const iconMap: Record<string, React.ElementType> = {
   Presentation
 };
 
-// Lista de apps con logos locales disponibles
+// Lista de apps con logos locales disponibles (con extensiones correctas)
 const localLogos: Record<string, string> = {
   'chatgpt': '/logos/chatgpt.png',
   'claude': '/logos/claude.png',
@@ -55,9 +55,9 @@ const localLogos: Record<string, string> = {
   'synthesia': '/logos/synthesia.png',
   'cursor': '/logos/cursor.png',
   'canva': '/logos/canva.png',
-  'heygen': '/logos/heygen.png',
+  'heygen': '/logos/heygen.jpeg',
   'leonardo-ai': '/logos/leonardo-ai.png',
-  'descript': '/logos/descript.png',
+  'descript': '/logos/descript.jpeg',
   'removebg': '/logos/removebg.png',
   'adobe-podcast': '/logos/adobe-podcast.png',
   'beautiful': '/logos/beautiful.png',
@@ -66,13 +66,13 @@ const localLogos: Record<string, string> = {
   'copyleaks': '/logos/copyleaks.png',
   'speechify': '/logos/speechify.png',
   'krea': '/logos/krea.png',
-  'whispert': '/logos/whispert.png',
   'blackbox': '/logos/blackbox.png',
-  'browse-ai': '/logos/browse-ai.png',
+  'browse-ai': '/logos/browse-ai.webp',
   'lovable': '/logos/lovable.png',
   'remini': '/logos/remini.png',
-  'mythicx': '/logos/mythicx.png',
+  'mythicx': '/logos/mythicx.jpeg',
   'character-ai': '/logos/character-ai.png',
+  'gamma-app': '/logos/gamma-app.png',
 };
 
 // Función para obtener el dominio de una URL
