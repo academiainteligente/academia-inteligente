@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { SUBSCRIPTION_PLANS, SUPPORT_WHATSAPP, SUPPORT_WHATSAPP_LINK, MESSAGES, COLORS } from '../types';
 
@@ -15,9 +15,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'form' | 'payment'>('form');
-  const [registeredUser, setRegisteredUser] = useState<any>(null);
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -48,7 +46,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const user = await register({
+      await register({
         email: formData.email,
         password: formData.password,
         displayName: formData.displayName,
@@ -56,7 +54,6 @@ export default function Register() {
         planId: formData.planId,
       });
       
-      setRegisteredUser(user);
       setStep('payment');
     } catch (err: any) {
       setError(err.message || MESSAGES.REGISTER_ERROR);
@@ -67,7 +64,6 @@ export default function Register() {
 
   const selectedPlan = SUBSCRIPTION_PLANS.find(p => p.id === formData.planId);
 
-  // Componente para el Plan Fundador (Premium)
   const FounderPlanCard = ({ plan, isSelected, onSelect }: { plan: any, isSelected: boolean, onSelect: () => void }) => (
     <div 
       onClick={onSelect}
@@ -79,14 +75,12 @@ export default function Register() {
         border: isSelected ? '2px solid #fbbf24' : '2px solid transparent'
       }}
     >
-      {/* Badge Premium */}
       <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
         <span className="px-4 py-1 rounded-full text-xs font-bold text-slate-900" style={{ backgroundColor: COLORS.gold }}>
           {plan.badge}
         </span>
       </div>
       
-      {/* Icono de corona */}
       <div className="text-center mb-4">
         <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(251, 191, 36, 0.2)' }}>
           <svg className="w-8 h-8" fill="currentColor" style={{ color: COLORS.gold }} viewBox="0 0 20 20">
@@ -124,7 +118,6 @@ export default function Register() {
     </div>
   );
 
-  // Componente para el Plan Estudiante (Profesional)
   const StudentPlanCard = ({ plan, isSelected, onSelect }: { plan: any, isSelected: boolean, onSelect: () => void }) => (
     <div 
       onClick={onSelect}
@@ -136,7 +129,6 @@ export default function Register() {
         border: isSelected ? '2px solid #3b82f6' : '2px solid #e2e8f0'
       }}
     >
-      {/* Badge */}
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
           <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-blue-500">
@@ -145,7 +137,6 @@ export default function Register() {
         </div>
       )}
       
-      {/* Icono */}
       <div className="text-center mb-4">
         <div className="w-14 h-14 mx-auto rounded-full flex items-center justify-center bg-blue-100">
           <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,18 +174,14 @@ export default function Register() {
     </div>
   );
 
-  // Componente para el Plan Aprendiz (Sencillo)
   const ApprenticePlanCard = ({ plan, isSelected, onSelect }: { plan: any, isSelected: boolean, onSelect: () => void }) => (
     <div 
       onClick={onSelect}
       className={`relative rounded-lg p-5 cursor-pointer transition-all ${
         isSelected ? 'ring-2 ring-green-400 shadow-md' : 'border border-gray-200 hover:shadow-md'
       }`}
-      style={{ 
-        backgroundColor: '#ffffff',
-      }}
+      style={{ backgroundColor: '#ffffff' }}
     >
-      {/* Título llamativo */}
       <div className="text-center mb-3">
         <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-green-700 bg-green-100 mb-2">
           CONVIÉRTETE EN APRENDIZ
@@ -230,14 +217,12 @@ export default function Register() {
     </div>
   );
 
-  // Paso de pago
   if (step === 'payment' && selectedPlan) {
     const isApprentice = selectedPlan.id === 'apprentice';
     
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ backgroundColor: COLORS.background }}>
         <div className="max-w-lg w-full space-y-8">
-          {/* Logo */}
           <div className="text-center">
             <img 
               src="/logo-largo.png" 
@@ -249,7 +234,6 @@ export default function Register() {
             </h2>
           </div>
 
-          {/* Resumen del plan */}
           <div 
             className="rounded-xl p-6 border-2" 
             style={{ 
@@ -294,7 +278,6 @@ export default function Register() {
             </ul>
           </div>
 
-          {/* Botón de pago */}
           {isApprentice ? (
             <a
               href={selectedPlan.mercadoPagoLink}
@@ -323,7 +306,6 @@ export default function Register() {
             </a>
           )}
 
-          {/* Información de contacto */}
           <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#f0fdf4' }}>
             <p className="text-sm mb-2" style={{ color: COLORS.text }}>
               ¿Ya realizaste el pago?
@@ -356,11 +338,9 @@ export default function Register() {
     );
   }
 
-  // Formulario de registro con selección de planes
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ backgroundColor: COLORS.background }}>
       <div className="max-w-6xl w-full space-y-8">
-        {/* Logo */}
         <div className="text-center">
           <img 
             src="/logo-largo.png" 
@@ -381,22 +361,18 @@ export default function Register() {
           </div>
         )}
 
-        {/* Selección de Planes */}
         <div className="mb-8">
           <h3 className="text-center text-lg font-semibold mb-6" style={{ color: COLORS.text }}>
             Selecciona tu plan
           </h3>
           
-          {/* Grid de planes - Fundador y Estudiante en la misma fila, Aprendiz abajo */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 max-w-4xl mx-auto">
-            {/* Plan Fundador - Premium */}
             <FounderPlanCard 
               plan={SUBSCRIPTION_PLANS[0]} 
               isSelected={formData.planId === 'founder'}
               onSelect={() => setFormData({ ...formData, planId: 'founder' })}
             />
             
-            {/* Plan Estudiante - Profesional */}
             <StudentPlanCard 
               plan={SUBSCRIPTION_PLANS[1]} 
               isSelected={formData.planId === 'student'}
@@ -404,7 +380,6 @@ export default function Register() {
             />
           </div>
           
-          {/* Plan Aprendiz - Sencillo, centrado abajo */}
           <div className="max-w-sm mx-auto">
             <ApprenticePlanCard 
               plan={SUBSCRIPTION_PLANS[2]} 
@@ -414,7 +389,6 @@ export default function Register() {
           </div>
         </div>
 
-        {/* Formulario de datos */}
         <form className="max-w-md mx-auto space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -529,7 +503,6 @@ export default function Register() {
           </button>
         </form>
 
-        {/* Enlace a login */}
         <div className="text-center">
           <p className="text-sm" style={{ color: COLORS.textMuted }}>
             ¿Ya tienes una cuenta?{' '}
@@ -543,7 +516,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Soporte */}
         <div className="text-center pt-6 border-t max-w-md mx-auto" style={{ borderColor: '#e2e8f0' }}>
           <p className="text-sm mb-2" style={{ color: COLORS.textMuted }}>
             ¿Tienes dudas sobre los planes?
