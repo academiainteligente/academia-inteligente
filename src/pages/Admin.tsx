@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, query, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
-import { useAuth } from '../context/AuthContext';
-import { User, SubscriptionStatus, SUBSCRIPTION_PLANS, getPlanName, getStatusLabel, getStatusColor, COLORS } from '../types';
+import { User, SubscriptionStatus, getPlanName, getStatusLabel, getStatusColor, COLORS } from '../types';
 
 interface UserWithData extends User {
   id: string;
@@ -154,7 +153,6 @@ export default function Admin() {
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: COLORS.background }}>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ color: COLORS.text }}>
             Panel de Administración
@@ -171,7 +169,6 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Estadísticas */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
           <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#f8fafc' }}>
             <div className="text-2xl font-bold" style={{ color: COLORS.text }}>{stats.total}</div>
@@ -207,7 +204,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Filtros y búsqueda */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <input
@@ -251,7 +247,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Tabla de usuarios */}
         <div className="rounded-lg border overflow-hidden" style={{ borderColor: '#e2e8f0' }}>
           <div className="overflow-x-auto">
             <table className="w-full">
