@@ -14,8 +14,19 @@ export interface App {
   etiquetas: string[];
 }
 
+export const categorias = [
+  { id: 'todas', nombre: 'Todas', icono: 'LayoutGrid', color: 'from-purple-500 to-blue-500' },
+  { id: 'texto', nombre: 'Texto', icono: 'MessageSquare', color: 'from-green-500 to-emerald-500' },
+  { id: 'imagen', nombre: 'Imágenes', icono: 'Image', color: 'from-pink-500 to-rose-500' },
+  { id: 'video', nombre: 'Video', icono: 'Video', color: 'from-orange-500 to-amber-500' },
+  { id: 'audio', nombre: 'Audio', icono: 'Mic', color: 'from-cyan-500 to-blue-500' },
+  { id: 'codigo', nombre: 'Código', icono: 'Code', color: 'from-indigo-500 to-violet-500' },
+  { id: 'productividad', nombre: 'Productividad', icono: 'Zap', color: 'from-yellow-500 to-orange-500' },
+  { id: 'presentaciones', nombre: 'Presentaciones', icono: 'Presentation', color: 'from-teal-500 to-green-500' },
+];
+
 export const apps: App[] = [
-  {
+{
     id: 'chatgpt',
     nombre: 'ChatGPT',
     categoria: 'texto',
@@ -30,7 +41,7 @@ export const apps: App[] = [
     url: 'https://chat.openai.com',
     etiquetas: ['Chatbot', 'Texto', 'Productividad', 'Gratuito']
   },
-  {
+{
     id: 'claude',
     nombre: 'Claude',
     categoria: 'texto',
@@ -45,7 +56,7 @@ export const apps: App[] = [
     url: 'https://claude.ai',
     etiquetas: ['Chatbot', 'Texto', 'Razonamiento', 'Gratuito']
   },
-  {
+{
     id: 'gemini',
     nombre: 'Google Gemini',
     categoria: 'texto',
@@ -60,7 +71,7 @@ export const apps: App[] = [
     url: 'https://gemini.google.com',
     etiquetas: ['Chatbot', 'Multimodal', 'Google', 'Gratuito']
   },
-  {
+{
     id: 'midjourney',
     nombre: 'Midjourney',
     categoria: 'imagen',
@@ -75,7 +86,7 @@ export const apps: App[] = [
     url: 'https://www.midjourney.com',
     etiquetas: ['Imágenes', 'Arte', 'Creatividad', 'Pago']
   },
-  {
+{
     id: 'dalle',
     nombre: 'DALL-E 3',
     categoria: 'imagen',
@@ -90,7 +101,7 @@ export const apps: App[] = [
     url: 'https://chat.openai.com',
     etiquetas: ['Imágenes', 'OpenAI', 'ChatGPT', 'Pago']
   },
-  {
+{
     id: 'runway',
     nombre: 'Runway Gen-2',
     categoria: 'video',
@@ -105,7 +116,7 @@ export const apps: App[] = [
     url: 'https://runwayml.com',
     etiquetas: ['Video', 'Generación', 'Edición', 'Pago']
   },
-  {
+{
     id: 'pika',
     nombre: 'Pika Labs',
     categoria: 'video',
@@ -120,7 +131,7 @@ export const apps: App[] = [
     url: 'https://pika.art',
     etiquetas: ['Video', 'Efectos', 'Creatividad', 'Gratuito']
   },
-  {
+{
     id: 'elevenlabs',
     nombre: 'ElevenLabs',
     categoria: 'audio',
@@ -135,7 +146,7 @@ export const apps: App[] = [
     url: 'https://elevenlabs.io',
     etiquetas: ['Voz', 'Audio', 'Texto a voz', 'Gratuito']
   },
-  {
+{
     id: 'github-copilot',
     nombre: 'GitHub Copilot',
     categoria: 'codigo',
@@ -150,7 +161,7 @@ export const apps: App[] = [
     url: 'https://github.com/features/copilot',
     etiquetas: ['Código', 'Programación', 'Desarrollo', 'Pago']
   },
-  {
+{
     id: 'notion',
     nombre: 'Notion AI',
     categoria: 'productividad',
@@ -165,7 +176,7 @@ export const apps: App[] = [
     url: 'https://notion.so',
     etiquetas: ['Productividad', 'Notas', 'Organización', 'Pago']
   },
-  {
+{
     id: 'gamma',
     nombre: 'Gamma',
     categoria: 'presentaciones',
@@ -180,7 +191,7 @@ export const apps: App[] = [
     url: 'https://gamma.app',
     etiquetas: ['Presentaciones', 'Diseño', 'Productividad', 'Gratuito']
   },
-  {
+{
     id: 'perplexity',
     nombre: 'Perplexity AI',
     categoria: 'texto',
@@ -195,7 +206,7 @@ export const apps: App[] = [
     url: 'https://perplexity.ai',
     etiquetas: ['Búsqueda', 'Investigación', 'Texto', 'Gratuito']
   },
-  {
+{
     id: 'stable-diffusion',
     nombre: 'Stable Diffusion',
     categoria: 'imagen',
@@ -210,7 +221,7 @@ export const apps: App[] = [
     url: 'https://stability.ai',
     etiquetas: ['Imágenes', 'Open Source', 'Local', 'Gratuito']
   },
-  {
+{
     id: 'synthesia',
     nombre: 'Synthesia',
     categoria: 'video',
@@ -225,7 +236,7 @@ export const apps: App[] = [
     url: 'https://synthesia.io',
     etiquetas: ['Video', 'Avatares', 'Marketing', 'Pago']
   },
-  {
+{
     id: 'cursor',
     nombre: 'Cursor',
     categoria: 'codigo',
@@ -239,39 +250,509 @@ export const apps: App[] = [
     contras: ['Requiere aprender comandos', 'Puede ser lento', 'Dependencia de IA'],
     url: 'https://cursor.sh',
     etiquetas: ['Código', 'Editor', 'Desarrollo', 'Gratuito']
+  },
+{
+    id: 'mythicx',
+    nombre: 'MythicX',
+    categoria: 'texto',
+    descripcion: 'Asistente de IA conversacional avanzado',
+    descripcionLarga: 'MythicX es un asistente de IA que ofrece conversaciones naturales, generación de contenido y asistencia en múltiples tareas.',
+    calificacion: 4.5,
+    usuarios: '500K+',
+    precio: 'Freemium',
+    caracteristicas: ['Chatbot avanzado', 'Generación de texto', 'Asistencia personal', 'Múltiples idiomas'],
+    pros: ['Interfaz intuitiva', 'Respuestas rápidas', 'Versión gratuita disponible'],
+    contras: ['Menos conocido', 'Funciones limitadas en gratis'],
+    url: 'https://mythicx.ai',
+    etiquetas: ['Chatbot', 'Texto', 'Asistente', 'Gratuito']
+  },
+{
+    id: 'canva',
+    nombre: 'Canva Text to Image',
+    categoria: 'imagen',
+    descripcion: 'Genera imágenes con IA directamente en Canva',
+    descripcionLarga: 'Canva Text to Image es una herramienta integrada en Canva que permite generar imágenes a partir de descripciones de texto usando IA.',
+    calificacion: 4.5,
+    usuarios: '100M+',
+    precio: 'Freemium',
+    caracteristicas: ['Generación de imágenes', 'Integración con Canva', 'Múltiples estilos', 'Edición integrada', 'Plantillas'],
+    pros: ['Integración perfecta con Canva', 'Fácil de usar', 'Resultados rápidos', 'Versión gratuita disponible'],
+    contras: ['Calidad inferior a Midjourney', 'Limitaciones en versión gratis', 'Depende de Canva'],
+    url: 'https://www.canva.com',
+    etiquetas: ['Imágenes', 'Diseño', 'Canva', 'Gratuito']
+  },
+{
+    id: 'heygen',
+    nombre: 'HeyGen',
+    categoria: 'video',
+    descripcion: 'Crea videos con avatares de IA profesionales',
+    descripcionLarga: 'HeyGen es una plataforma de video con IA que permite crear videos profesionales con avatares realistas en múltiples idiomas.',
+    calificacion: 4.6,
+    usuarios: '100K+',
+    precio: 'Desde $24/mes',
+    caracteristicas: ['Avatares realistas', 'Múltiples idiomas', 'Voz clonada', 'Plantillas', 'API disponible'],
+    pros: ['Avatares muy realistas', 'Fácil de usar', 'Traducción automática', 'Buena calidad de video'],
+    contras: ['Precio elevado', 'Créditos limitados', 'Pocos avatares en versión básica'],
+    url: 'https://www.heygen.com',
+    etiquetas: ['Video', 'Avatares', 'Marketing', 'Pago']
+  },
+{
+    id: 'remini',
+    nombre: 'Remini',
+    categoria: 'imagen',
+    descripcion: 'Mejora y restaura fotos con IA',
+    descripcionLarga: 'Remini es una aplicación de IA que mejora la calidad de fotos antiguas, borrosas o de baja resolución.',
+    calificacion: 4.7,
+    usuarios: '10M+',
+    precio: 'Freemium',
+    caracteristicas: ['Mejora de fotos', 'Restauración', 'Eliminación de borrosidad', 'Colorización', 'Retoque facial'],
+    pros: ['Resultados impresionantes', 'Fácil de usar', 'App móvil disponible', 'Versión gratuita'],
+    contras: ['Anuncios en versión gratis', 'Procesamiento lento', 'Calidad inconsistente'],
+    url: 'https://www.remini.ai',
+    etiquetas: ['Imágenes', 'Fotografía', 'Restauración', 'Gratuito']
+  },
+{
+    id: 'speechify',
+    nombre: 'Speechify',
+    categoria: 'audio',
+    descripcion: 'Convierte texto a voz natural',
+    descripcionLarga: 'Speechify convierte cualquier texto en audio hablado usando voces naturales de alta calidad.',
+    calificacion: 4.7,
+    usuarios: '20M+',
+    precio: 'Freemium',
+    caracteristicas: ['Texto a voz', 'Voces naturales', 'Múltiples idiomas', 'Velocidad ajustable'],
+    pros: ['Voces excelentes', 'Fácil de usar', 'Ahorra tiempo'],
+    contras: ['Precio premium', 'Voces limitadas en gratis'],
+    url: 'https://speechify.com',
+    etiquetas: ['Audio', 'Texto a voz', 'Productividad', 'Gratuito']
+  },
+{
+    id: 'krea',
+    nombre: 'Krea',
+    categoria: 'imagen',
+    descripcion: 'Generación de imágenes en tiempo real',
+    descripcionLarga: 'Krea genera imágenes en tiempo real mientras dibujas o escribes, ofreciendo una experiencia creativa única.',
+    calificacion: 4.6,
+    usuarios: '1M+',
+    precio: 'Freemium',
+    caracteristicas: ['Generación en tiempo real', 'Dibujo', 'Texto a imagen', 'Estilos'],
+    pros: ['Experiencia única', 'Resultados instantáneos', 'Creatividad potenciada'],
+    contras: ['Calidad variable', 'Créditos limitados'],
+    url: 'https://krea.ai',
+    etiquetas: ['Imágenes', 'Creatividad', 'Diseño', 'Gratuito']
+  },
+{
+    id: 'blackbox',
+    nombre: 'BlackBox',
+    categoria: 'codigo',
+    descripcion: 'Copilot de código con IA',
+    descripcionLarga: 'BlackBox es un asistente de programación que ayuda a escribir, explicar y depurar código usando IA.',
+    calificacion: 4.5,
+    usuarios: '1M+',
+    precio: 'Freemium',
+    caracteristicas: ['Generación de código', 'Explicación', 'Depuración', 'Múltiples lenguajes'],
+    pros: ['Útil para aprender', 'Rápido', 'Versión gratuita'],
+    contras: ['No siempre preciso', 'Limitaciones en gratis'],
+    url: 'https://blackbox.ai',
+    etiquetas: ['Código', 'Programación', 'Desarrollo', 'Gratuito']
+  },
+{
+    id: 'browse-ai',
+    nombre: 'Browse AI',
+    categoria: 'productividad',
+    descripcion: 'Extracción de datos web con IA',
+    descripcionLarga: 'Browse AI extrae datos de sitios web automáticamente usando IA, sin necesidad de programación.',
+    calificacion: 4.6,
+    usuarios: '400K+',
+    precio: 'Freemium',
+    caracteristicas: ['Web scraping', 'Extracción de datos', 'Automatización', 'Integraciones'],
+    pros: ['Sin código', 'Fácil de usar', 'Integraciones útiles'],
+    contras: ['Precio para uso masivo', 'Limitaciones en gratis'],
+    url: 'https://browse.ai',
+    etiquetas: ['Web', 'Datos', 'Automatización', 'Gratuito']
+  },
+{
+    id: 'lovable',
+    nombre: 'Lovable',
+    categoria: 'productividad',
+    descripcion: 'Creador de aplicaciones con IA',
+    descripcionLarga: 'Lovable permite crear aplicaciones web completas usando solo descripciones en lenguaje natural.',
+    calificacion: 4.5,
+    usuarios: '200K+',
+    precio: 'Freemium',
+    caracteristicas: ['Creación de apps', 'Sin código', 'IA', 'Despliegue'],
+    pros: ['Sin código', 'Rápido', 'Resultados impresionantes'],
+    contras: ['Personalización limitada', 'Dependencia de la plataforma'],
+    url: 'https://lovable.dev',
+    etiquetas: ['Desarrollo', 'No-code', 'Apps', 'Gratuito']
+  },
+{
+    id: 'otter',
+    nombre: 'Otter',
+    categoria: 'productividad',
+    descripcion: 'Transcripción de reuniones y notas con IA',
+    descripcionLarga: 'Otter es un asistente de reuniones que transcribe audio en tiempo real, genera notas y resume conversaciones.',
+    calificacion: 4.5,
+    usuarios: '5M+',
+    precio: 'Freemium',
+    caracteristicas: ['Transcripción en tiempo real', 'Resumen automático', 'Compartir notas', 'Integración con Zoom', 'Búsqueda en transcripciones'],
+    pros: ['Transcripción precisa', 'Integración con calendario', 'Colaboración en equipo', 'Versión gratuita útil'],
+    contras: ['Límite de minutos en gratis', 'Precio elevado para equipos', 'Solo en inglés principalmente'],
+    url: 'https://otter.ai',
+    etiquetas: ['Productividad', 'Transcripción', 'Reuniones', 'Gratuito']
+  },
+{
+    id: 'semrush',
+    nombre: 'Semrush',
+    categoria: 'productividad',
+    descripcion: 'Plataforma completa de marketing digital con IA',
+    descripcionLarga: 'Semrush es una suite de herramientas de marketing digital que incluye SEO, análisis de competencia, publicidad y redes sociales con funciones de IA.',
+    calificacion: 4.7,
+    usuarios: '10M+',
+    precio: 'Desde $119/mes',
+    caracteristicas: ['SEO', 'Análisis de competencia', 'Keyword research', 'Auditoría de sitios', 'Redes sociales'],
+    pros: ['Herramientas muy completas', 'Datos actualizados', 'Reportes profesionales', 'API disponible'],
+    contras: ['Precio elevado', 'Curva de aprendizaje', 'Puede ser abrumador'],
+    url: 'https://www.semrush.com',
+    etiquetas: ['Marketing', 'SEO', 'Análisis', 'Pago']
+  },
+{
+    id: 'character-ai',
+    nombre: 'Character.AI',
+    categoria: 'texto',
+    descripcion: 'Chatbots de IA con personalidades únicas',
+    descripcionLarga: 'Character.AI permite crear y conversar con personajes de IA con personalidades, conocimientos y estilos de conversación únicos.',
+    calificacion: 4.6,
+    usuarios: '20M+',
+    precio: 'Freemium',
+    caracteristicas: ['Personajes personalizados', 'Conversaciones naturales', 'Múltiples temas', 'Comunidad activa', 'App móvil'],
+    pros: ['Personajes muy divertidos', 'Versión gratuita completa', 'Creatividad ilimitada', 'Comunidad grande'],
+    contras: ['Puede ser adictivo', 'Personajes pueden ser inconsistentes', 'Filtrado de contenido'],
+    url: 'https://character.ai',
+    etiquetas: ['Chatbot', 'Entretenimiento', 'Creatividad', 'Gratuito']
+  },
+{
+    id: 'copyleaks',
+    nombre: 'Copyleaks',
+    categoria: 'productividad',
+    descripcion: 'Detector de plagio y contenido generado por IA',
+    descripcionLarga: 'Copyleaks detecta plagio y contenido generado por IA en textos, ayudando a verificar autenticidad y originalidad.',
+    calificacion: 4.4,
+    usuarios: '5M+',
+    precio: 'Freemium',
+    caracteristicas: ['Detección de plagio', 'Detección de IA', 'Verificación de autenticidad', 'API disponible', 'Integración con LMS'],
+    pros: ['Detección precisa', 'Múltiples idiomas', 'Reportes detallados', 'API robusta'],
+    contras: ['Falsos positivos ocasionales', 'Precio para equipos', 'Interfaz básica'],
+    url: 'https://copyleaks.com',
+    etiquetas: ['Productividad', 'Educación', 'Verificación', 'Gratuito']
+  },
+{
+    id: 'leonardo-ai',
+    nombre: 'Leonardo AI',
+    categoria: 'imagen',
+    descripcion: 'Generador de imágenes y assets para juegos',
+    descripcionLarga: 'Leonardo AI es una plataforma de generación de imágenes especializada en crear assets para videojuegos, arte conceptual y diseño.',
+    calificacion: 4.7,
+    usuarios: '15M+',
+    precio: 'Freemium',
+    caracteristicas: ['Generación de imágenes', 'Assets para juegos', 'Modelos personalizados', 'Alchemy upscaler', 'Motion video'],
+    pros: ['Calidad excelente', 'Especializado en gaming', 'Tokens gratuitos diarios', 'Comunidad activa'],
+    contras: ['Créditos limitados', 'Colas en horas pico', 'Algunos modelos requieren pago'],
+    url: 'https://leonardo.ai',
+    etiquetas: ['Imágenes', 'Gaming', 'Assets', 'Gratuito']
+  },
+{
+    id: 'descript',
+    nombre: 'Descript',
+    categoria: 'video',
+    descripcion: 'Edición de video y audio con transcripción',
+    descripcionLarga: 'Descript es una herramienta de edición de video y audio que permite editar como si fuera un documento de texto, con funciones de IA.',
+    calificacion: 4.8,
+    usuarios: '1M+',
+    precio: 'Freemium',
+    caracteristicas: ['Edición basada en texto', 'Transcripción automática', 'Overdub', 'Eliminación de rellenos', 'Screen recording'],
+    pros: ['Edición muy intuitiva', 'Overdub impresionante', 'Transcripción precisa', 'Colaboración fácil'],
+    contras: ['Precio elevado', 'Puede ser lento', 'Curva de aprendizaje inicial'],
+    url: 'https://www.descript.com',
+    etiquetas: ['Video', 'Audio', 'Edición', 'Gratuito']
+  },
+{
+    id: 'gamma-app',
+    nombre: 'Gamma App',
+    categoria: 'presentaciones',
+    descripcion: 'Presentaciones narrativas con IA',
+    descripcionLarga: 'Gamma App crea presentaciones narrativas y visualmente atractivas usando IA.',
+    calificacion: 4.7,
+    usuarios: '3M+',
+    precio: 'Freemium',
+    caracteristicas: ['Presentaciones', 'Narrativa', 'Diseño', 'Colaboración'],
+    pros: ['Diseño profesional', 'Narrativa integrada', 'Fácil de usar'],
+    contras: ['Marca de agua en gratis', 'Plantillas limitadas'],
+    url: 'https://gamma.app',
+    etiquetas: ['Presentaciones', 'Diseño', 'Narrativa', 'Gratuito']
+  },
+{
+    id: 'removebg',
+    nombre: 'Remove.bg',
+    categoria: 'imagen',
+    descripcion: 'Elimina el fondo de imágenes automáticamente',
+    descripcionLarga: 'Remove.bg elimina automáticamente el fondo de cualquier imagen usando IA, con resultados profesionales en segundos.',
+    calificacion: 4.8,
+    usuarios: '50M+',
+    precio: 'Freemium',
+    caracteristicas: ['Eliminación de fondo', 'Procesamiento automático', 'API disponible', 'Plugin Photoshop', 'App móvil'],
+    pros: ['Resultados perfectos', 'Muy rápido', 'Fácil de usar', 'API excelente'],
+    contras: ['Créditos limitados en gratis', 'Precio para uso masivo', 'Algunos fondos complejos'],
+    url: 'https://www.remove.bg',
+    etiquetas: ['Imágenes', 'Edición', 'Fotografía', 'Gratuito']
+  },
+{
+    id: 'elevenlabs-pro',
+    nombre: 'ElevenLabs Pro',
+    categoria: 'audio',
+    descripcion: 'Voces de IA profesionales',
+    descripcionLarga: 'ElevenLabs Pro ofrece voces de IA de la más alta calidad para narración, doblaje y contenido.',
+    calificacion: 4.9,
+    usuarios: '3M+',
+    precio: 'Desde $5/mes',
+    caracteristicas: ['Voces', 'Narración', 'Doblaje', 'Clonación'],
+    pros: ['Voces ultra realistas', 'Múltiples idiomas', 'API robusta'],
+    contras: ['Créditos limitados', 'Precio con uso intensivo'],
+    url: 'https://elevenlabs.io',
+    etiquetas: ['Audio', 'Voz', 'Narración', 'Pago']
+  },
+{
+    id: 'runway-gen2',
+    nombre: 'Runway Gen-2',
+    categoria: 'video',
+    descripcion: 'Generación avanzada de video con IA',
+    descripcionLarga: 'Runway Gen-2 es la última versión de la plataforma de generación de video de Runway, con mejoras significativas en calidad y control.',
+    calificacion: 4.8,
+    usuarios: '3M+',
+    precio: 'Desde $15/mes',
+    caracteristicas: ['Text-to-video', 'Image-to-video', 'Motion brush', 'Generación de video', 'Efectos especiales'],
+    pros: ['Calidad de video excepcional', 'Control creativo avanzado', 'Herramientas profesionales', 'Innovación constante'],
+    contras: ['Créditos limitados', 'Precio elevado', 'Videos cortos'],
+    url: 'https://runwayml.com',
+    etiquetas: ['Video', 'Generación', 'Creatividad', 'Pago']
+  },
+{
+    id: 'synthesia-video',
+    nombre: 'Synthesia',
+    categoria: 'video',
+    descripcion: 'Videos profesionales con avatares de IA',
+    descripcionLarga: 'Synthesia permite crear videos profesionales con avatares de IA que hablan en múltiples idiomas, ideal para capacitación y marketing.',
+    calificacion: 4.7,
+    usuarios: '50K+',
+    precio: 'Desde $22/mes',
+    caracteristicas: ['Avatares de IA', 'Múltiples idiomas', 'Plantillas profesionales', 'Personalización', 'API'],
+    pros: ['Videos de alta calidad', 'Sin necesidad de equipo', 'Escalable', 'Multilingüe'],
+    contras: ['Precio elevado', 'Avatares limitados', 'Créditos restrictivos'],
+    url: 'https://www.synthesia.io',
+    etiquetas: ['Video', 'Avatares', 'Marketing', 'Pago']
+  },
+{
+    id: 'elevenlabs-voice',
+    nombre: 'ElevenLabs',
+    categoria: 'audio',
+    descripcion: 'Voz de IA más realista del mercado',
+    descripcionLarga: 'ElevenLabs ofrece tecnología de texto a voz con la calidad más realista disponible, incluyendo clonación de voz y múltiples idiomas.',
+    calificacion: 4.9,
+    usuarios: '5M+',
+    precio: 'Freemium',
+    caracteristicas: ['Texto a voz', 'Clonación de voz', 'Múltiples idiomas', 'Control de emociones', 'API'],
+    pros: ['Voces extremadamente naturales', 'Clonación de alta calidad', 'API robusta', 'Muchos idiomas'],
+    contras: ['Créditos limitados', 'Precio con uso intensivo', 'Restricciones éticas'],
+    url: 'https://elevenlabs.io',
+    etiquetas: ['Audio', 'Voz', 'Texto a voz', 'Gratuito']
+  },
+{
+    id: 'chatgpt-plus',
+    nombre: 'ChatGPT Plus',
+    categoria: 'texto',
+    descripcion: 'Versión premium de ChatGPT',
+    descripcionLarga: 'ChatGPT Plus ofrece acceso prioritario a GPT-4 con mayor velocidad y capacidades avanzadas.',
+    calificacion: 4.8,
+    usuarios: '100M+',
+    precio: 'Desde $20/mes',
+    caracteristicas: ['GPT-4', 'Prioridad', 'Plugins', 'Navegación'],
+    pros: ['Acceso prioritario', 'GPT-4 más potente', 'Plugins útiles'],
+    contras: ['Precio', 'A veces lento en horas pico'],
+    url: 'https://chat.openai.com',
+    etiquetas: ['Chatbot', 'GPT-4', 'Texto', 'Pago']
+  },
+{
+    id: 'midjourney-v6',
+    nombre: 'Midjourney V6',
+    categoria: 'imagen',
+    descripcion: 'Generación de imágenes artísticas avanzada',
+    descripcionLarga: 'Midjourney V6 es la última versión del generador de imágenes artísticas más popular.',
+    calificacion: 4.9,
+    usuarios: '20M+',
+    precio: 'Desde $10/mes',
+    caracteristicas: ['Imágenes', 'Arte', 'Generación', 'Estilos'],
+    pros: ['Calidad excepcional', 'Estilos únicos', 'Comunidad activa'],
+    contras: ['Precio', 'Discord obligatorio', 'Curva de aprendizaje'],
+    url: 'https://midjourney.com',
+    etiquetas: ['Imágenes', 'Arte', 'Generación', 'Pago']
+  },
+{
+    id: 'gemini-youtube-chat',
+    nombre: 'Gemini YouTube Chat',
+    categoria: 'productividad',
+    descripcion: 'Resumen de videos de YouTube con IA',
+    descripcionLarga: 'Gemini YouTube Chat resume videos de YouTube y responde preguntas sobre el contenido.',
+    calificacion: 4.4,
+    usuarios: '1M+',
+    precio: 'Gratis',
+    caracteristicas: ['YouTube', 'Resumen', 'Chat', 'Preguntas'],
+    pros: ['Ahorra tiempo', 'Gratis', 'Fácil de usar'],
+    contras: ['Precisión variable', 'Videos largos'],
+    url: 'https://gemini.google.com',
+    etiquetas: ['YouTube', 'Resumen', 'Video', 'Gratis']
+  },
+{
+    id: 'gemini-pro',
+    nombre: 'Gemini Pro',
+    categoria: 'texto',
+    descripcion: 'Modelo de lenguaje avanzado de Google',
+    descripcionLarga: 'Gemini Pro es el modelo de lenguaje más avanzado de Google con capacidades multimodales.',
+    calificacion: 4.7,
+    usuarios: '50M+',
+    precio: 'Freemium',
+    caracteristicas: ['Multimodal', 'Texto', 'Imágenes', 'Código'],
+    pros: ['Multimodal', 'Rápido', 'Integración Google'],
+    contras: ['A veces alucina', 'Limitaciones en gratis'],
+    url: 'https://gemini.google.com',
+    etiquetas: ['Chatbot', 'Multimodal', 'Google', 'Gratuito']
+  },
+{
+    id: 'github-copilot-chat',
+    nombre: 'GitHub Copilot Chat',
+    categoria: 'codigo',
+    descripcion: 'Chat de IA integrado en tu IDE',
+    descripcionLarga: 'GitHub Copilot Chat es un asistente de programación conversacional integrado directamente en tu editor de código.',
+    calificacion: 4.7,
+    usuarios: '2M+',
+    precio: 'Desde $10/mes',
+    caracteristicas: ['Chat en IDE', 'Explicación de código', 'Generación de funciones', 'Depuración', 'Refactorización'],
+    pros: ['Integración perfecta', 'Aumenta productividad', 'Explicaciones claras', 'Múltiples lenguajes'],
+    contras: ['Requiere suscripción', 'A veces genera código incorrecto', 'Dependencia de conexión'],
+    url: 'https://github.com/features/copilot',
+    etiquetas: ['Código', 'Chatbot', 'Desarrollo', 'Pago']
+  },
+{
+    id: 'perplexity-pro',
+    nombre: 'Perplexity Pro',
+    categoria: 'busqueda',
+    descripcion: 'Búsqueda avanzada con IA',
+    descripcionLarga: 'Perplexity Pro ofrece búsqueda avanzada con acceso a múltiples modelos de IA y fuentes.',
+    calificacion: 4.7,
+    usuarios: '10M+',
+    precio: 'Desde $20/mes',
+    caracteristicas: ['Búsqueda', 'Múltiples modelos', 'Fuentes', 'Pro'],
+    pros: ['Respuestas detalladas', 'Múltiples modelos', 'Copilot'],
+    contras: ['Precio', 'A veces lento'],
+    url: 'https://perplexity.ai',
+    etiquetas: ['Búsqueda', 'Investigación', 'IA', 'Pago']
+  },
+{
+    id: 'notion-ai-writer',
+    nombre: 'Notion AI Writer',
+    categoria: 'productividad',
+    descripcion: 'Escritura asistida por IA en Notion',
+    descripcionLarga: 'Notion AI Writer es un asistente de escritura que ayuda a crear, editar y mejorar contenido directamente en Notion.',
+    calificacion: 4.5,
+    usuarios: '20M+',
+    precio: 'Desde $10/mes',
+    caracteristicas: ['Escritura asistida', 'Resumen de texto', 'Traducción', 'Generación de ideas', 'Corrección'],
+    pros: ['Integración perfecta con Notion', 'Fácil de usar', 'Mejora flujo de trabajo', 'Buen valor'],
+    contras: ['Requiere suscripción', 'Créditos limitados', 'No tan potente como ChatGPT'],
+    url: 'https://notion.so',
+    etiquetas: ['Productividad', 'Escritura', 'Notas', 'Pago']
+  },
+{
+    id: 'github-copilot-pro',
+    nombre: 'GitHub Copilot Pro',
+    categoria: 'codigo',
+    descripcion: 'Asistente de código avanzado',
+    descripcionLarga: 'GitHub Copilot Pro ofrece sugerencias de código más avanzadas y acceso prioritario.',
+    calificacion: 4.8,
+    usuarios: '5M+',
+    precio: 'Desde $19/mes',
+    caracteristicas: ['Código', 'Sugerencias', 'Chat', 'Pro'],
+    pros: ['Sugerencias excelentes', 'Chat integrado', 'Aumenta productividad'],
+    contras: ['Precio', 'A veces incorrecto'],
+    url: 'https://github.com/features/copilot',
+    etiquetas: ['Código', 'Desarrollo', 'GitHub', 'Pago']
+  },
+{
+    id: 'gamma-presentations',
+    nombre: 'Gamma Presentaciones',
+    categoria: 'presentaciones',
+    descripcion: 'Presentaciones profesionales con IA',
+    descripcionLarga: 'Gamma crea presentaciones profesionales a partir de texto usando IA, con diseños modernos y colaboración en tiempo real.',
+    calificacion: 4.7,
+    usuarios: '3M+',
+    precio: 'Freemium',
+    caracteristicas: ['Generación de presentaciones', 'Diseños automáticos', 'Colaboración', 'Exportación', 'Plantillas'],
+    pros: ['Presentaciones rápidas', 'Diseños modernos', 'Fácil colaboración', 'Versión gratuita útil'],
+    contras: ['Marca de agua en gratis', 'Limitaciones de exportación', 'Menos flexible que PowerPoint'],
+    url: 'https://gamma.app',
+    etiquetas: ['Presentaciones', 'Diseño', 'Productividad', 'Gratuito']
+  },
+{
+    id: 'perplexity-search',
+    nombre: 'Perplexity Search',
+    categoria: 'texto',
+    descripcion: 'Búsqueda con respuestas de IA y fuentes',
+    descripcionLarga: 'Perplexity Search combina búsqueda web con modelos de IA para proporcionar respuestas directas con fuentes citadas.',
+    calificacion: 4.8,
+    usuarios: '15M+',
+    precio: 'Freemium',
+    caracteristicas: ['Búsqueda con IA', 'Fuentes citadas', 'Acceso a internet', 'Múltiples modelos', 'App móvil'],
+    pros: ['Respuestas con fuentes', 'Información actualizada', 'Interfaz limpia', 'Versión gratuita completa'],
+    contras: ['A veces lento', 'Depende de fuentes externas', 'Limitaciones en gratis'],
+    url: 'https://perplexity.ai',
+    etiquetas: ['Búsqueda', 'Investigación', 'Texto', 'Gratuito']
+  },
+{
+    id: 'adobe-podcast',
+    nombre: 'Adobe Podcast',
+    categoria: 'audio',
+    descripcion: 'Edición de podcasts con IA',
+    descripcionLarga: 'Adobe Podcast ofrece herramientas de IA para grabar y editar podcasts profesionales.',
+    calificacion: 4.7,
+    usuarios: '500K+',
+    precio: 'Freemium',
+    caracteristicas: ['Podcast', 'Edición', 'Grabación', 'IA'],
+    pros: ['Calidad profesional', 'Fácil de usar', 'Gratis'],
+    contras: ['Funciones avanzadas de pago', 'Requiere cuenta Adobe'],
+    url: 'https://podcast.adobe.com',
+    etiquetas: ['Audio', 'Podcast', 'Edición', 'Gratuito']
+  },
+{
+    id: 'beautiful',
+    nombre: 'Beautiful',
+    categoria: 'presentaciones',
+    descripcion: 'Presentaciones hermosas con IA',
+    descripcionLarga: 'Beautiful crea presentaciones visualmente impactantes usando IA para diseño automático.',
+    calificacion: 4.6,
+    usuarios: '5M+',
+    precio: 'Freemium',
+    caracteristicas: ['Presentaciones', 'Diseño', 'IA', 'Visual'],
+    pros: ['Diseño hermoso', 'Fácil de usar', 'Versión gratuita'],
+    contras: ['Plantillas limitadas en gratis', 'Marca de agua'],
+    url: 'https://beautiful.ai',
+    etiquetas: ['Presentaciones', 'Diseño', 'Visual', 'Gratuito']
   }
 ];
 
-export const categorias = [
-  { id: 'todas', nombre: 'Todas', icono: 'LayoutGrid' },
-  { id: 'texto', nombre: 'Texto y Chat', icono: 'MessageSquare' },
-  { id: 'imagen', nombre: 'Imagen', icono: 'Image' },
-  { id: 'video', nombre: 'Video', icono: 'Video' },
-  { id: 'audio', nombre: 'Audio y Voz', icono: 'Mic' },
-  { id: 'codigo', nombre: 'Código', icono: 'Code' },
-  { id: 'productividad', nombre: 'Productividad', icono: 'Zap' },
-  { id: 'presentaciones', nombre: 'Presentaciones', icono: 'Presentation' }
-];
-
-export function getAppsByCategoria(categoriaId: string): App[] {
-  if (categoriaId === 'todas') return apps;
-  return apps.filter(app => app.categoria === categoriaId);
-}
-
-export function searchApps(query: string): App[] {
-  const lowerQuery = query.toLowerCase();
-  return apps.filter(app => 
-    app.nombre.toLowerCase().includes(lowerQuery) ||
-    app.descripcion.toLowerCase().includes(lowerQuery) ||
-    app.etiquetas.some(tag => tag.toLowerCase().includes(lowerQuery))
-  );
-}
-
 export function getRelatedApps(appId: string, limit: number = 3): App[] {
-  const app = apps.find(a => a.id === appId);
-  if (!app) return [];
-  
+  const currentApp = apps.find(a => a.id === appId);
+  if (!currentApp) return [];
+
   return apps
-    .filter(a => a.id !== appId && a.categoria === app.categoria)
+    .filter(app => app.id !== appId && app.categoria === currentApp.categoria)
     .slice(0, limit);
 }
