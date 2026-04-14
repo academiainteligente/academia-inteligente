@@ -15,7 +15,6 @@ import {
   Code,
   Zap,
   Presentation,
-  Sparkles,
   ArrowLeft,
   Home as HomeIcon, 
   Calendar, 
@@ -38,6 +37,123 @@ const iconMap: Record<string, React.ElementType> = {
   Presentation
 };
 
+// Lista de apps con logos locales disponibles
+const localLogos: Record<string, string> = {
+  'chatgpt': '/logos/chatgpt.png',
+  'claude': '/logos/claude.png',
+  'gemini': '/logos/gemini.png',
+  'midjourney': '/logos/midjourney.png',
+  'dalle': '/logos/dalle.png',
+  'runway': '/logos/runway.png',
+  'pika': '/logos/pika.png',
+  'elevenlabs': '/logos/elevenlabs.png',
+  'github-copilot': '/logos/github-copilot.png',
+  'notion': '/logos/notion.png',
+  'gamma': '/logos/gamma.png',
+  'perplexity': '/logos/perplexity.png',
+  'stable-diffusion': '/logos/stable-diffusion.png',
+  'synthesia': '/logos/synthesia.png',
+  'cursor': '/logos/cursor.png',
+  'canva': '/logos/canva.png',
+  'heygen': '/logos/heygen.png',
+  'leonardo-ai': '/logos/leonardo-ai.png',
+  'descript': '/logos/descript.png',
+  'removebg': '/logos/removebg.png',
+  'adobe-podcast': '/logos/adobe-podcast.png',
+  'beautiful': '/logos/beautiful.png',
+  'otter': '/logos/otter.png',
+  'semrush': '/logos/semrush.png',
+  'copyleaks': '/logos/copyleaks.png',
+  'speechify': '/logos/speechify.png',
+  'krea': '/logos/krea.png',
+  'whispert': '/logos/whispert.png',
+  'blackbox': '/logos/blackbox.png',
+  'browse-ai': '/logos/browse-ai.png',
+  'lovable': '/logos/lovable.png',
+  'remini': '/logos/remini.png',
+  'mythicx': '/logos/mythicx.png',
+  'character-ai': '/logos/character-ai.png',
+};
+
+// Función para obtener el dominio de una URL
+function getDomainFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.replace('www.', '');
+  } catch {
+    return '';
+  }
+}
+
+// Componente para mostrar el logo de la app
+function AppLogo({ app, size = 'md' }: { app: App; size?: 'sm' | 'md' | 'lg' }) {
+  const sizeClasses = {
+    sm: 'w-8 h-8',
+    md: 'w-14 h-14',
+    lg: 'w-16 h-16'
+  };
+  const textSizes = {
+    sm: 'text-sm',
+    md: 'text-lg',
+    lg: 'text-xl'
+  };
+  
+  // Verificar si hay logo local
+  const localLogo = localLogos[app.id];
+  
+  // Si no hay logo local, usar favicon de Google
+  const domain = getDomainFromUrl(app.url);
+  const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=256` : '';
+  
+  // Colores para fallback
+  const colors = [
+    'from-purple-500 to-blue-500',
+    'from-pink-500 to-rose-500',
+    'from-green-500 to-emerald-500',
+    'from-orange-500 to-amber-500',
+    'from-cyan-500 to-blue-500',
+    'from-indigo-500 to-violet-500'
+  ];
+  const colorIndex = app.id.length % colors.length;
+  
+  const [hasError, setHasError] = useState(false);
+  
+  // Si hay logo local, usarlo
+  if (localLogo) {
+    return (
+      <div className={`${sizeClasses[size]} rounded-xl overflow-hidden flex-shrink-0 bg-white border border-gray-200 flex items-center justify-center`}>
+        <img 
+          src={localLogo}
+          alt={app.nombre}
+          className="w-full h-full object-contain p-1"
+          onError={() => setHasError(true)}
+        />
+      </div>
+    );
+  }
+  
+  // Si no hay logo local pero hay favicon, intentar usarlo
+  if (faviconUrl && !hasError) {
+    return (
+      <div className={`${sizeClasses[size]} rounded-xl overflow-hidden flex-shrink-0 bg-white border border-gray-200 flex items-center justify-center`}>
+        <img 
+          src={faviconUrl}
+          alt={app.nombre}
+          className="w-full h-full object-contain p-1"
+          onError={() => setHasError(true)}
+        />
+      </div>
+    );
+  }
+  
+  // Fallback: mostrar inicial con color
+  return (
+    <div className={`${sizeClasses[size]} rounded-xl bg-gradient-to-br ${colors[colorIndex]} flex items-center justify-center flex-shrink-0`}>
+      <span className={`text-white font-bold ${textSizes[size]}`}>{app.nombre.charAt(0)}</span>
+    </div>
+  );
+}
+
 function AppCard({ app, onClick }: { app: App; onClick: () => void }) {
   return (
     <div 
@@ -45,8 +161,8 @@ function AppCard({ app, onClick }: { app: App; onClick: () => void }) {
       className="bg-white rounded-xl border border-gray-200 p-5 cursor-pointer hover:shadow-lg hover:border-[#a3e635] transition-all duration-300 group"
     >
       <div className="flex items-start gap-4">
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-          <span className="text-white font-bold text-lg">{app.nombre.charAt(0)}</span>
+        <div className="group-hover:scale-105 transition-transform">
+          <AppLogo app={app} size="md" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-gray-900 truncate">{app.nombre}</h3>
@@ -79,9 +195,7 @@ function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-xl">{app.nombre.charAt(0)}</span>
-          </div>
+          <AppLogo app={app} size="lg" />
           <div className="flex-1">
             <h2 className="text-2xl font-bold">{app.nombre}</h2>
             <div className="flex items-center gap-3 mt-2">
@@ -146,9 +260,7 @@ function AppModal({ app, isOpen, onClose }: { app: App | null; isOpen: boolean; 
               <div className="flex gap-3">
                 {relatedApps.map(related => (
                   <div key={related.id} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
-                    <div className="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">{related.nombre.charAt(0)}</span>
-                    </div>
+                    <AppLogo app={related} size="sm" />
                     <span className="text-sm font-medium">{related.nombre}</span>
                   </div>
                 ))}
@@ -291,9 +403,11 @@ export default function DirectorioApps() {
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#a3e635] rounded-lg flex items-center justify-center">
-            <span className="text-black font-bold">AI</span>
-          </div>
+          <img 
+            src="/logo-ai-mobile.png" 
+            alt="AI" 
+            className="w-8 h-8 object-cover"
+          />
         </Link>
         <button className="text-sm font-medium text-gray-700">
           INICIAR SESIÓN
@@ -311,9 +425,11 @@ export default function DirectorioApps() {
               </button>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#a3e635] rounded-lg flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-black" />
-              </div>
+              <img 
+                src="/logo-ai-mobile.png" 
+                alt="AI" 
+                className="w-10 h-10 object-cover"
+              />
               <div>
                 <h1 className="text-xl font-bold">Directorio de Apps</h1>
                 <p className="text-sm text-gray-500">Descubre las mejores herramientas de IA</p>
