@@ -7,8 +7,10 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   User as FirebaseUser,
+  fetchSignInMethodsForEmail,
+  deleteUser,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { User, CreateUserData, UserRole, SubscriptionStatus } from '../types';
 
@@ -21,6 +23,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   refreshUserData: () => Promise<void>;
+  checkUserCanRegister: (email: string) => Promise<{ canRegister: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -84,6 +87,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Nueva función: Verifica si un usuario puede registrarse
+  const checkUserCanRegister = async (email: string): Promise<{ canRegister: boolean; message?: string }> => {
+    try {
+      // Buscar en Firestore si existe un usuario con este email
+      const usersRef = await getDoc(doc(db, 'users_by_email', email.toLowerCase()));
+      
+      if (usersRef.exists()) {
+        const userData = usersRef.data();
+        
+        // Si el usuario ya tiene suscripción activa, no puede re-registrarse
+        if (userData.subscriptionStatus === 'active') {
+          return {
+            canRegister: false,
+            message: 'Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión.'
+          };
+        }
+        
+        // Si el usuario está pendiente, puede re-registrarse
+        return { canRegister: true };
+      }
+      
+      // Si no existe, puede registrarse
+      return { canRegister: true };
+    } catch (error) {
+      console.error('Error al verificar registro:', error);
+      return { canRegister: true };
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -101,6 +133,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: CreateUserData): Promise<User> => {
     try {
+      // Verificar si el usuario puede registrarse
+      const checkResult = await checkUserCanRegister(data.email);
+      if (!checkResult.canRegister) {
+        throw new Error(checkResult.message);
+      }
+
+      // Si el usuario ya existe en Firebase Auth pero está pendiente, eliminarlo primero
+      const signInMethods = await fetchSignInMethodsForEmail(auth, data.email);
+      
+      if (signInMethods.length > 0) {
+        // El usuario existe en Auth, intentar eliminar el usuario anterior de Firestore
+        try {
+          // Buscar y eliminar el documento anterior en users_by_email
+          const oldUserDoc = await getDoc(doc(db, 'users_by_email', data.email.toLowerCase()));
+          if (oldUserDoc.exists()) {
+            const oldUserData = oldUserDoc.data();
+            // Eliminar el documento antiguo de users
+            if (oldUserData.uid) {
+              await deleteDoc(doc(db, 'users', oldUserData.uid));
+            }
+            // Eliminar el documento de users_by_email
+            await deleteDoc(doc(db, 'users_by_email', data.email.toLowerCase()));
+          }
+        } catch (deleteError) {
+          console.log('No se pudo eliminar usuario anterior:', deleteError);
+        }
+      }
+
+      // Crear el nuevo usuario en Firebase Auth
       const result = await createUserWithEmailAndPassword(auth, data.email, data.password);
       
       await updateProfile(result.user, {
@@ -125,6 +186,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updatedAt: serverTimestamp(),
         lastLoginAt: serverTimestamp(),
         uid: result.user.uid,
+        // Marcar como pre-registro (no confirmado hasta que el admin lo active)
+        isPreRegistration: true,
+        paymentVerified: false,
       };
 
       // Solo agregar phone si tiene valor
@@ -132,7 +196,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userDataToSave.phone = data.phone;
       }
 
+      // Guardar en la colección users
       await setDoc(doc(db, 'users', result.user.uid), userDataToSave);
+
+      // Guardar en users_by_email para búsquedas rápidas
+      await setDoc(doc(db, 'users_by_email', data.email.toLowerCase()), {
+        uid: result.user.uid,
+        email: data.email,
+        subscriptionStatus: 'pending',
+        planId: data.planId,
+        createdAt: serverTimestamp(),
+        isPreRegistration: true,
+        paymentVerified: false,
+      });
 
       const newUser: User = {
         uid: result.user.uid,
@@ -152,7 +228,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return newUser;
     } catch (error: any) {
       console.error('Error al registrar usuario:', error);
-      throw new Error(getAuthErrorMessage(error.code));
+      throw new Error(getAuthErrorMessage(error.code) || error.message);
     }
   };
 
@@ -181,7 +257,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'auth/user-disabled': 'Esta cuenta ha sido desactivada',
       'auth/user-not-found': 'No existe una cuenta con este correo',
       'auth/wrong-password': 'Contraseña incorrecta',
-      'auth/email-already-in-use': 'Ya existe una cuenta con este correo',
+      'auth/email-already-in-use': 'Ya existe una cuenta con este correo. Si ya realizaste tu pago, por favor inicia sesión.',
       'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres',
       'auth/invalid-credential': 'Correo o contraseña incorrectos',
       'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde',
@@ -198,6 +274,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     resetPassword,
     refreshUserData,
+    checkUserCanRegister,
   };
 
   return (
