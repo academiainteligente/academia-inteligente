@@ -86,28 +86,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Nueva función: Verifica si un usuario puede registrarse
   const checkUserCanRegister = async (email: string): Promise<{ canRegister: boolean; message?: string }> => {
     try {
-      // Buscar en Firestore si existe un usuario con este email
       const usersRef = await getDoc(doc(db, 'users_by_email', email.toLowerCase()));
       
       if (usersRef.exists()) {
         const userData = usersRef.data();
         
-        // Si el usuario ya tiene suscripción activa, no puede re-registrarse
         if (userData.subscriptionStatus === 'active') {
           return {
             canRegister: false,
-            message: 'Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión.'
+            message: 'Ya existe una cuenta con este correo electronico. Por favor, inicia sesion.'
           };
         }
         
-        // Si el usuario está pendiente, puede re-registrarse
         return { canRegister: true };
       }
       
-      // Si no existe, puede registrarse
       return { canRegister: true };
     } catch (error) {
       console.error('Error al verificar registro:', error);
@@ -125,34 +120,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       await fetchUserData(result.user.uid);
     } catch (error: any) {
-      console.error('Error al iniciar sesión:', error);
+      console.error('Error al iniciar sesion:', error);
       throw new Error(getAuthErrorMessage(error.code));
     }
   };
 
   const register = async (data: CreateUserData): Promise<User> => {
     try {
-      // Verificar si el usuario puede registrarse
       const checkResult = await checkUserCanRegister(data.email);
       if (!checkResult.canRegister) {
         throw new Error(checkResult.message);
       }
 
-      // Si el usuario ya existe en Firebase Auth pero está pendiente, eliminarlo primero
       const signInMethods = await fetchSignInMethodsForEmail(auth, data.email);
       
       if (signInMethods.length > 0) {
-        // El usuario existe en Auth, intentar eliminar el usuario anterior de Firestore
         try {
-          // Buscar y eliminar el documento anterior en users_by_email
           const oldUserDoc = await getDoc(doc(db, 'users_by_email', data.email.toLowerCase()));
           if (oldUserDoc.exists()) {
             const oldUserData = oldUserDoc.data();
-            // Eliminar el documento antiguo de users
             if (oldUserData.uid) {
               await deleteDoc(doc(db, 'users', oldUserData.uid));
             }
-            // Eliminar el documento de users_by_email
             await deleteDoc(doc(db, 'users_by_email', data.email.toLowerCase()));
           }
         } catch (deleteError) {
@@ -160,7 +149,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Crear el nuevo usuario en Firebase Auth
       const result = await createUserWithEmailAndPassword(auth, data.email, data.password);
       
       await updateProfile(result.user, {
@@ -173,7 +161,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         'apprentice': 'apprentice'
       };
 
-      // CORRECCIÓN: No incluir phone si está vacío
       const userDataToSave: any = {
         email: data.email,
         displayName: data.displayName,
@@ -185,20 +172,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updatedAt: serverTimestamp(),
         lastLoginAt: serverTimestamp(),
         uid: result.user.uid,
-        // Marcar como pre-registro (no confirmado hasta que el admin lo active)
         isPreRegistration: true,
         paymentVerified: false,
       };
 
-      // Solo agregar phone si tiene valor
       if (data.phone && data.phone.trim() !== '') {
         userDataToSave.phone = data.phone;
       }
 
-      // Guardar en la colección users
       await setDoc(doc(db, 'users', result.user.uid), userDataToSave);
 
-      // Guardar en users_by_email para búsquedas rápidas
       await setDoc(doc(db, 'users_by_email', data.email.toLowerCase()), {
         uid: result.user.uid,
         email: data.email,
@@ -236,8 +219,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await signOut(auth);
       setUserData(null);
     } catch (error: any) {
-      console.error('Error al cerrar sesión:', error);
-      throw new Error('Error al cerrar sesión');
+      console.error('Error al cerrar sesion:', error);
+      throw new Error('Error al cerrar sesion');
     }
   };
 
@@ -252,16 +235,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function getAuthErrorMessage(code: string): string {
     const errorMessages: Record<string, string> = {
-      'auth/invalid-email': 'El correo electrónico no es válido',
+      'auth/invalid-email': 'El correo electronico no es valido',
       'auth/user-disabled': 'Esta cuenta ha sido desactivada',
       'auth/user-not-found': 'No existe una cuenta con este correo',
-      'auth/wrong-password': 'Contraseña incorrecta',
-      'auth/email-already-in-use': 'Ya existe una cuenta con este correo. Si ya realizaste tu pago, por favor inicia sesión.',
-      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres',
-      'auth/invalid-credential': 'Correo o contraseña incorrectos',
-      'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde',
+      'auth/wrong-password': 'Contrasena incorrecta',
+      'auth/email-already-in-use': 'Ya existe una cuenta con este correo. Si ya realizaste tu pago, por favor inicia sesion.',
+      'auth/weak-password': 'La contrasena debe tener al menos 6 caracteres',
+      'auth/invalid-credential': 'Correo o contrasena incorrectos',
+      'auth/too-many-requests': 'Demasiados intentos. Intenta mas tarde',
     };
-    return errorMessages[code] || 'Error de autenticación. Intenta de nuevo.';
+    return errorMessages[code] || 'Error de autenticacion. Intenta de nuevo.';
   }
 
   const value: AuthContextType = {
