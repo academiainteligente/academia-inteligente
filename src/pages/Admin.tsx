@@ -1,54 +1,40 @@
 import { useState, useEffect } from 'react';
-import { collection, query, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, orderBy, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { User, SubscriptionStatus, getPlanName, getStatusLabel, getStatusColor, COLORS } from '../types';
+import { useAuth } from '../context/AuthContext';
+import { User, SubscriptionStatus, SUBSCRIPTION_PLANS, COLORS } from '../types';
+import { Link } from 'react-router-dom';
 
-interface UserWithData extends User {
+interface UserWithId extends User {
   id: string;
 }
 
 export default function Admin() {
-  const [users, setUsers] = useState<UserWithData[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<UserWithData[]>([]);
+  const [users, setUsers] = useState<UserWithId[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filter, setFilter] = useState<'all' | SubscriptionStatus>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<SubscriptionStatus | 'all'>('all');
   const [updating, setUpdating] = useState<string | null>(null);
+  const { userData } = useAuth();
 
   useEffect(() => {
-    loadUsers();
+    fetchUsers();
   }, []);
 
-  useEffect(() => {
-    let result = users;
-
-    if (filter !== 'all') {
-      result = result.filter(user => user.subscriptionStatus === filter);
-    }
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(user =>
-        user.displayName.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term)
-      );
-    }
-
-    setFilteredUsers(result);
-  }, [users, filter, searchTerm]);
-
-  const loadUsers = async () => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-
-      const usersData: UserWithData[] = [];
+      const usersQuery = query(
+        collection(db, 'users'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(usersQuery);
+      const usersList: UserWithId[] = [];
+      
       snapshot.forEach((doc) => {
         const data = doc.data();
-        usersData.push({
+        usersList.push({
           id: doc.id,
           uid: data.uid,
           email: data.email,
@@ -61,11 +47,10 @@ export default function Admin() {
           updatedAt: data.updatedAt?.toDate(),
           lastLoginAt: data.lastLoginAt?.toDate(),
           phone: data.phone,
-        } as UserWithData);
+        });
       });
-
-      setUsers(usersData);
-      setFilteredUsers(usersData);
+      
+      setUsers(usersList);
     } catch (err: any) {
       setError('Error al cargar usuarios: ' + err.message);
     } finally {
@@ -78,41 +63,17 @@ export default function Admin() {
       setUpdating(userId);
       const userRef = doc(db, 'users', userId);
       
-      // Obtener datos del usuario para actualizar users_by_email también
-      const userDoc = await getDocs(query(collection(db, 'users')));
-      let userEmail = '';
-      userDoc.forEach((doc) => {
-        if (doc.id === userId) {
-          userEmail = doc.data().email;
-        }
-      });
-      
       const updateData: any = {
         subscriptionStatus: newStatus,
         updatedAt: new Date(),
       };
       
-      // Si se está activando el usuario, marcar como pago verificado y ya no es pre-registro
       if (newStatus === 'active') {
         updateData.isPreRegistration = false;
         updateData.paymentVerified = true;
       }
       
       await updateDoc(userRef, updateData);
-      
-      // También actualizar en users_by_email si existe
-      if (userEmail) {
-        try {
-          const userByEmailRef = doc(db, 'users_by_email', userEmail.toLowerCase());
-          await updateDoc(userByEmailRef, {
-            subscriptionStatus: newStatus,
-            isPreRegistration: newStatus === 'active' ? false : true,
-            paymentVerified: newStatus === 'active' ? true : false,
-          });
-        } catch (emailUpdateError) {
-          console.log('No se pudo actualizar users_by_email:', emailUpdateError);
-        }
-      }
 
       setUsers(prev => prev.map(user =>
         user.id === userId ? { ...user, subscriptionStatus: newStatus } : user
@@ -124,47 +85,32 @@ export default function Admin() {
     }
   };
 
-  const exportToCSV = () => {
-    const headers = ['Nombre', 'Email', 'Teléfono', 'Plan', 'Estado', 'Rol', 'Fecha de Registro'];
-    const rows = filteredUsers.map(user => [
-      user.displayName,
-      user.email,
-      user.phone || '',
-      getPlanName(user.planId),
-      getStatusLabel(user.subscriptionStatus),
-      user.role,
-      user.createdAt ? new Date(user.createdAt).toLocaleDateString('es-MX') : ''
-    ]);
+  const filteredUsers = filter === 'all' 
+    ? users 
+    : users.filter(user => user.subscriptionStatus === filter);
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `usuarios-academia-${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
+  const getPlanName = (planId: string) => {
+    const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
+    return plan?.name || planId;
   };
 
-  const stats = {
-    total: users.length,
-    pending: users.filter(u => u.subscriptionStatus === 'pending').length,
-    active: users.filter(u => u.subscriptionStatus === 'active').length,
-    inactive: users.filter(u => u.subscriptionStatus === 'inactive').length,
-    expired: users.filter(u => u.subscriptionStatus === 'expired').length,
-    founders: users.filter(u => u.planId === 'founder').length,
-    students: users.filter(u => u.planId === 'student').length,
-    apprentices: users.filter(u => u.planId === 'apprentice').length,
+  const getStatusColor = (status: SubscriptionStatus) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'inactive': return 'bg-gray-100 text-gray-800';
+      case 'expired': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const getPlanBadgeColor = (planId: string | null) => {
-    switch (planId) {
-      case 'founder': return { bg: '#1e293b', text: COLORS.gold };
-      case 'student': return { bg: '#eff6ff', text: '#3b82f6' };
-      case 'apprentice': return { bg: '#f7fee7', text: COLORS.primaryDark };
-      default: return { bg: '#f1f5f9', text: COLORS.textMuted };
+  const getStatusText = (status: SubscriptionStatus) => {
+    switch (status) {
+      case 'active': return 'Activo';
+      case 'pending': return 'Pendiente';
+      case 'inactive': return 'Inactivo';
+      case 'expired': return 'Expirado';
+      default: return status;
     }
   };
 
@@ -172,215 +118,187 @@ export default function Admin() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: COLORS.background }}>
         <div className="text-center">
-          <svg className="animate-spin h-12 w-12 mx-auto mb-4" style={{ color: COLORS.primary }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p style={{ color: COLORS.textMuted }}>Cargando usuarios...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto" style={{ borderColor: COLORS.primaryDark }}></div>
+          <p className="mt-4" style={{ color: COLORS.textMuted }}>Cargando usuarios...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: COLORS.background }}>
+    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: COLORS.background }}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: COLORS.text }}>
-            Panel de Administración
-          </h1>
-          <p style={{ color: COLORS.textMuted }}>
-            Gestiona los usuarios y suscripciones de Academia Inteligente
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold" style={{ color: COLORS.text }}>Panel de Administracion</h1>
+              <p className="mt-1" style={{ color: COLORS.textMuted }}>Gestion de usuarios y suscripciones</p>
+            </div>
+            <Link 
+              to="/" 
+              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              style={{ backgroundColor: COLORS.primary, color: '#0f172a' }}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+              </svg>
+              Volver al inicio
+            </Link>
+          </div>
         </div>
 
         {error && (
-          <div className="rounded-lg p-4 mb-6 text-sm" style={{ backgroundColor: '#fef2f2', color: COLORS.error, border: `1px solid ${COLORS.error}` }}>
+          <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: '#fef2f2', color: COLORS.error, border: `1px solid ${COLORS.error}` }}>
             {error}
-            <button onClick={() => setError('')} className="float-right font-bold">×</button>
           </div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#f8fafc' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.text }}>{stats.total}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Total</div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="p-4 rounded-lg" style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <p className="text-sm" style={{ color: COLORS.textMuted }}>Total Usuarios</p>
+            <p className="text-2xl font-bold" style={{ color: COLORS.text }}>{users.length}</p>
           </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#fffbeb' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.pending }}>{stats.pending}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Pendientes</div>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: '#fefce8', border: '1px solid #fde047' }}>
+            <p className="text-sm" style={{ color: COLORS.textMuted }}>Pendientes</p>
+            <p className="text-2xl font-bold" style={{ color: '#854d0e' }}>{users.filter(u => u.subscriptionStatus === 'pending').length}</p>
           </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#f0fdf4' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.success }}>{stats.active}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Activos</div>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
+            <p className="text-sm" style={{ color: COLORS.textMuted }}>Activos</p>
+            <p className="text-2xl font-bold" style={{ color: '#166534' }}>{users.filter(u => u.subscriptionStatus === 'active').length}</p>
           </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#f1f5f9' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.textMuted }}>{stats.inactive}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Inactivos</div>
-          </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#fef2f2' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.error }}>{stats.expired}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Expirados</div>
-          </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#1e293b' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.gold }}>{stats.founders}</div>
-            <div className="text-xs text-gray-400">Fundadores</div>
-          </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#eff6ff' }}>
-            <div className="text-2xl font-bold" style={{ color: '#3b82f6' }}>{stats.students}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Estudiantes</div>
-          </div>
-          <div className="rounded-lg p-4 border" style={{ borderColor: '#e2e8f0', backgroundColor: '#f7fee7' }}>
-            <div className="text-2xl font-bold" style={{ color: COLORS.primaryDark }}>{stats.apprentices}</div>
-            <div className="text-xs" style={{ color: COLORS.textMuted }}>Aprendices</div>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5' }}>
+            <p className="text-sm" style={{ color: COLORS.textMuted }}>Inactivos/Expirados</p>
+            <p className="text-2xl font-bold" style={{ color: '#991b1b' }}>{users.filter(u => u.subscriptionStatus === 'inactive' || u.subscriptionStatus === 'expired').length}</p>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Buscar por nombre o email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-              style={{ borderColor: '#e2e8f0' }}
-            />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as any)}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-              style={{ borderColor: '#e2e8f0' }}
-            >
-              <option value="all">Todos los estados</option>
-              <option value="pending">Pendiente</option>
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-              <option value="expired">Expirado</option>
-            </select>
-            <button
-              onClick={exportToCSV}
-              className="px-4 py-2 rounded-lg font-medium transition-all"
-              style={{ backgroundColor: COLORS.primary, color: COLORS.secondary }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.primaryDark}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = COLORS.primary}
-            >
-              Exportar CSV
-            </button>
-            <button
-              onClick={loadUsers}
-              className="px-4 py-2 rounded-lg font-medium border transition-all"
-              style={{ borderColor: '#e2e8f0', color: COLORS.text }}
-            >
-              Actualizar
-            </button>
-          </div>
+        <div className="mb-6 flex flex-wrap gap-2">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              filter === 'all' ? 'text-slate-900' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            style={{ backgroundColor: filter === 'all' ? COLORS.primary : 'transparent', border: '1px solid #e2e8f0' }}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setFilter('pending')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              filter === 'pending' ? 'text-yellow-900' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            style={{ backgroundColor: filter === 'pending' ? '#fef08a' : 'transparent', border: '1px solid #e2e8f0' }}
+          >
+            Pendientes
+          </button>
+          <button
+            onClick={() => setFilter('active')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              filter === 'active' ? 'text-green-900' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            style={{ backgroundColor: filter === 'active' ? '#bbf7d0' : 'transparent', border: '1px solid #e2e8f0' }}
+          >
+            Activos
+          </button>
+          <button
+            onClick={() => setFilter('inactive')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              filter === 'inactive' ? 'text-gray-900' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            style={{ backgroundColor: filter === 'inactive' ? '#e2e8f0' : 'transparent', border: '1px solid #e2e8f0' }}
+          >
+            Inactivos
+          </button>
         </div>
 
-        <div className="rounded-lg border overflow-hidden" style={{ borderColor: '#e2e8f0' }}>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead style={{ backgroundColor: '#f8fafc' }}>
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Usuario</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Plan</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Estado</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Registro</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Acceso</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Acciones</th>
+        <div className="overflow-x-auto rounded-lg" style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+          <table className="min-w-full divide-y" style={{ borderColor: '#e2e8f0' }}>
+            <thead style={{ backgroundColor: '#f8fafc' }}>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Usuario</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Plan</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Estado</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Fecha Registro</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textMuted }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y" style={{ borderColor: '#e2e8f0' }}>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium" style={{ color: COLORS.text }}>{user.displayName}</div>
+                      <div className="text-sm" style={{ color: COLORS.textMuted }}>{user.email}</div>
+                      {user.phone && (
+                        <div className="text-xs" style={{ color: COLORS.textMuted }}>{user.phone}</div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm" style={{ color: COLORS.text }}>{getPlanName(user.planId || '')}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(user.subscriptionStatus)}`}>
+                      {getStatusText(user.subscriptionStatus)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: COLORS.textMuted }}>
+                    {user.createdAt?.toLocaleDateString('es-MX')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex gap-2">
+                      {user.subscriptionStatus === 'pending' && (
+                        <button
+                          onClick={() => updateUserStatus(user.id, 'active')}
+                          disabled={updating === user.id}
+                          className="px-3 py-1 rounded text-xs font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                        >
+                          {updating === user.id ? '...' : 'Activar'}
+                        </button>
+                      )}
+                      {user.subscriptionStatus === 'active' && (
+                        <button
+                          onClick={() => updateUserStatus(user.id, 'inactive')}
+                          disabled={updating === user.id}
+                          className="px-3 py-1 rounded text-xs font-medium text-white bg-gray-600 hover:bg-gray-700 disabled:opacity-50"
+                        >
+                          {updating === user.id ? '...' : 'Desactivar'}
+                        </button>
+                      )}
+                      {user.subscriptionStatus === 'inactive' && (
+                        <button
+                          onClick={() => updateUserStatus(user.id, 'active')}
+                          disabled={updating === user.id}
+                          className="px-3 py-1 rounded text-xs font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                        >
+                          {updating === user.id ? '...' : 'Reactivar'}
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y" style={{ backgroundColor: COLORS.background, borderColor: '#e2e8f0' }}>
-                {filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center" style={{ color: COLORS.textMuted }}>
-                      No se encontraron usuarios
-                    </td>
-                  </tr>
-                ) : (
-                  filteredUsers.map((user) => {
-                    const planColors = getPlanBadgeColor(user.planId);
-                    return (
-                      <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-4 py-4">
-                          <div>
-                            <div className="font-medium" style={{ color: COLORS.text }}>{user.displayName}</div>
-                            <div className="text-sm" style={{ color: COLORS.textMuted }}>{user.email}</div>
-                            {user.phone && <div className="text-xs" style={{ color: COLORS.textMuted }}>{user.phone}</div>}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span 
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            style={{ backgroundColor: planColors.bg, color: planColors.text }}
-                          >
-                            {getPlanName(user.planId)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span 
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            style={{ 
-                              backgroundColor: `${getStatusColor(user.subscriptionStatus)}20`,
-                              color: getStatusColor(user.subscriptionStatus)
-                            }}
-                          >
-                            {getStatusLabel(user.subscriptionStatus)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 text-sm" style={{ color: COLORS.textMuted }}>
-                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString('es-MX') : '-'}
-                        </td>
-                        <td className="px-4 py-4 text-sm" style={{ color: COLORS.textMuted }}>
-                          {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('es-MX') : '-'}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex gap-2">
-                            {user.subscriptionStatus === 'pending' && (
-                              <button
-                                onClick={() => updateUserStatus(user.id, 'active')}
-                                disabled={updating === user.id}
-                                className="px-3 py-1 rounded text-xs font-medium transition-all"
-                                style={{ backgroundColor: COLORS.success, color: 'white' }}
-                              >
-                                {updating === user.id ? '...' : 'Activar'}
-                              </button>
-                            )}
-                            {user.subscriptionStatus === 'active' && (
-                              <button
-                                onClick={() => updateUserStatus(user.id, 'inactive')}
-                                disabled={updating === user.id}
-                                className="px-3 py-1 rounded text-xs font-medium transition-all"
-                                style={{ backgroundColor: COLORS.textMuted, color: 'white' }}
-                              >
-                                {updating === user.id ? '...' : 'Desactivar'}
-                              </button>
-                            )}
-                            {(user.subscriptionStatus === 'inactive' || user.subscriptionStatus === 'expired') && (
-                              <button
-                                onClick={() => updateUserStatus(user.id, 'active')}
-                                disabled={updating === user.id}
-                                className="px-3 py-1 rounded text-xs font-medium transition-all"
-                                style={{ backgroundColor: COLORS.success, color: 'white' }}
-                              >
-                                {updating === user.id ? '...' : 'Reactivar'}
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
+          
+          {filteredUsers.length === 0 && (
+            <div className="text-center py-8">
+              <p style={{ color: COLORS.textMuted }}>No hay usuarios en esta categoria</p>
+            </div>
+          )}
         </div>
 
-        <div className="mt-6 text-sm" style={{ color: COLORS.textMuted }}>
-          Mostrando {filteredUsers.length} de {users.length} usuarios
+        <div className="mt-6 text-center">
+          <button
+            onClick={fetchUsers}
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{ backgroundColor: COLORS.primary, color: '#0f172a' }}
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Actualizar lista
+          </button>
         </div>
       </div>
     </div>
