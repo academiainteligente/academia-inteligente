@@ -77,10 +77,42 @@ export default function Admin() {
     try {
       setUpdating(userId);
       const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, {
+      
+      // Obtener datos del usuario para actualizar users_by_email también
+      const userDoc = await getDocs(query(collection(db, 'users')));
+      let userEmail = '';
+      userDoc.forEach((doc) => {
+        if (doc.id === userId) {
+          userEmail = doc.data().email;
+        }
+      });
+      
+      const updateData: any = {
         subscriptionStatus: newStatus,
         updatedAt: new Date(),
-      });
+      };
+      
+      // Si se está activando el usuario, marcar como pago verificado y ya no es pre-registro
+      if (newStatus === 'active') {
+        updateData.isPreRegistration = false;
+        updateData.paymentVerified = true;
+      }
+      
+      await updateDoc(userRef, updateData);
+      
+      // También actualizar en users_by_email si existe
+      if (userEmail) {
+        try {
+          const userByEmailRef = doc(db, 'users_by_email', userEmail.toLowerCase());
+          await updateDoc(userByEmailRef, {
+            subscriptionStatus: newStatus,
+            isPreRegistration: newStatus === 'active' ? false : true,
+            paymentVerified: newStatus === 'active' ? true : false,
+          });
+        } catch (emailUpdateError) {
+          console.log('No se pudo actualizar users_by_email:', emailUpdateError);
+        }
+      }
 
       setUsers(prev => prev.map(user =>
         user.id === userId ? { ...user, subscriptionStatus: newStatus } : user
