@@ -8,7 +8,6 @@ import {
   updateProfile,
   User as FirebaseUser,
   fetchSignInMethodsForEmail,
-  deleteUser,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
